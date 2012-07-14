@@ -67,7 +67,7 @@ public class NamedPattern {
     
     /**
      * Counts the unnamed capture groups in the named pattern. That is,
-     * all groups that do not begin with "(?<" and "(?:".
+     * all groups that do not begin with "(?".
      * 
      * @return the number of unnamed capture groups
      */
@@ -78,12 +78,12 @@ public class NamedPattern {
 		int sz = patt.length();
 		int i = -1;
 		
-		// count all the left-parens without "?<" or "?:"
+		// count all the left-parens without "(?"
 		while ((i = patt.indexOf("(", i+1)) >= 0) {
-			if (i < sz - 3) {
+			if (i < sz - 2) {
 				// ignore named groups and non-capturing groups
-				String next2 = patt.substring(i+1, i+3); 
-				if (next2.equals("?<") || next2.equals("?:")) {
+				String nextChar = patt.substring(i+1, i+2); 
+				if (nextChar.equals("?")) {
 					continue;
 				}
 			}
