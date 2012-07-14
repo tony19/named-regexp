@@ -3,6 +3,7 @@ package com.google.code.regexp;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -104,41 +105,49 @@ public class NamedMatcherTest {
         }
     }
 
+    @Ignore
     @Test
     public void testGroupString() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testStartString() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testEndString() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testFind() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testToMatchResult() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testUsePattern() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testReset() {
         fail("Not yet implemented"); // TODO
     }
 
+    @Ignore
     @Test
     public void testResetCharSequence() {
         fail("Not yet implemented"); // TODO
