@@ -4,7 +4,7 @@
 	<groupId>com.google.code.regexp</groupId>
 	<artifactId>named-regexp</artifactId>
 	<name>Named capturing groups for Java 5/6</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
