@@ -41,13 +41,31 @@ public class NamedPatternTest {
     	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
     	assertEquals(2, p.indexOf("named"));
     }
+
+    @Test
+    public void testIndexOfNamedGroupAfterEscapedParen() {
+    	NamedPattern p = NamedPattern.compile("\\(a\\)\\((b)\\)(?:c)(?<named>x)");
+    	assertEquals(1, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterSpecialConstruct1() {
+    	NamedPattern p = NamedPattern.compile("(?idsumx-idsumx)(?=b)(?!x)(?<named>x)");
+    	assertEquals(0, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfNamedGroupBeforeSpecialConstruct1() {
+    	NamedPattern p = NamedPattern.compile("(?<named>x)(?idsumx-idsumx)(?=b)(?!x)");
+    	assertEquals(0, p.indexOf("named"));
+    }
     
     @Test
     public void testIndexOfNotFound() {
     	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
     	assertEquals(-1, p.indexOf("dummy"));
     }
-
+    
     @Test
     public void testNamedPatternGetsOriginalPattern() {
     	final String ORIG_PATT = "(a)(b)(?:c)(?<named>x)";
@@ -61,5 +79,19 @@ public class NamedPatternTest {
     	final String PATT_W_NO_NAMED_GRPS = "(a)(b)(?:c)(x)"; 
     	NamedPattern p = NamedPattern.compile(ORIG_PATT);
     	assertEquals(PATT_W_NO_NAMED_GRPS, p.standardPattern());
+    }
+    
+    @Test
+    public void testNamedPatternAfterSpecialConstruct1() {
+    	final String ORIG_PATT = "(?idsumx-idsumx)(?=b)(?!x)(?<named>x)";
+    	NamedPattern p = NamedPattern.compile(ORIG_PATT);
+    	assertEquals(ORIG_PATT, p.namedPattern());
+    }
+    
+    @Test
+    public void testNamedPatternAfterEscapedParen() {
+    	final String ORIG_PATT = "\\(a\\)\\((b)\\)(?:c)(?<named>x)";
+    	NamedPattern p = NamedPattern.compile(ORIG_PATT);
+    	assertEquals(ORIG_PATT, p.namedPattern());
     }
 }

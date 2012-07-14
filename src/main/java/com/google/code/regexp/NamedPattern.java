@@ -27,7 +27,7 @@ public class NamedPattern {
 	 * @return the pattern
 	 */
     public static NamedPattern compile(String regex) {
-        return new NamedPattern(regex, 0);
+        return new NamedPattern(regex, null);
     }
 
     /**
@@ -47,7 +47,7 @@ public class NamedPattern {
      * @param regex the expression to be compiled
      * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
      */
-    private NamedPattern(String regex, int flags) {
+    private NamedPattern(String regex, Integer flags) {
     	namedPattern = regex;
     	pattern = buildStandardPattern(regex, flags);
     	groupNames = extractGroupNames(regex);
@@ -80,12 +80,14 @@ public class NamedPattern {
 		
 		// count all the left-parens without "(?"
 		while ((i = patt.indexOf("(", i+1)) >= 0) {
-			if (i < sz - 2) {
-				// ignore named groups and non-capturing groups
-				String nextChar = patt.substring(i+1, i+2); 
-				if (nextChar.equals("?")) {
-					continue;
-				}
+			
+			// ignore escaped paren
+			if ((i > 0) && (patt.charAt(i - 1) == '\\')) {
+				continue;
+			}
+			// ignore non-capturing groups
+			if ((i + 1 < sz) && (patt.charAt(i+1) == '?')) {
+				continue;
 			}
 			if (i >= sz - 1) break;
 			
@@ -229,8 +231,12 @@ public class NamedPattern {
      * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS 
 	 * @return
 	 */
-	static Pattern buildStandardPattern(String namedPattern, int flags) {
-		return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("), flags);
+	static Pattern buildStandardPattern(String namedPattern, Integer flags) {
+		if (flags == null) {
+			return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("));
+		} else {
+			return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("), flags);
+		}
 	}
 
 }
