@@ -1,7 +1,24 @@
+/**
+ * Copyright (C) 2012 The named-regexp Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.google.code.regexp;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +35,7 @@ public class NamedPattern {
 	private Pattern pattern;
 	private String namedPattern;
 	private List<String> groupNames;
-	private int numUnnamedGroups;
+	private Map<String,List<GroupInfo>> groupInfo;
 
 	/**
 	 * Compiles the given regular expression into a pattern
@@ -27,7 +44,7 @@ public class NamedPattern {
 	 * @return the pattern
 	 */
     public static NamedPattern compile(String regex) {
-        return new NamedPattern(regex, null);
+        return new NamedPattern(regex, 0);
     }
 
     /**
@@ -47,11 +64,10 @@ public class NamedPattern {
      * @param regex the expression to be compiled
      * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
      */
-    private NamedPattern(String regex, Integer flags) {
+    private NamedPattern(String regex, int flags) {
     	namedPattern = regex;
     	pattern = buildStandardPattern(regex, flags);
-    	groupNames = extractGroupNames(regex);
-    	numUnnamedGroups = countUnnamedGroups();
+    	groupInfo = extractGroupInfo(regex);
 	}
 
     /**
@@ -61,41 +77,30 @@ public class NamedPattern {
      * @return group index or -1 if not found
      */
     public int indexOf(String groupName) {
-    	int idx = groupNames.indexOf(groupName);
-    	return idx > -1 ? numUnnamedGroups + idx : -1;
+    	return indexOf(groupName, 0);
     }
     
     /**
-     * Counts the unnamed capture groups in the named pattern. That is,
-     * all groups that do not begin with "(?".
+     * Gets the group index of a named capture group at the
+     * specified index. If only one instance of the named
+     * group exists, use index 0. 
      * 
-     * @return the number of unnamed capture groups
+     * @param groupName name of capture group
+     * @param index the index of the named capture group within 
+     * the pattern (if more than one instance)
+     * @return group index or -1 if not found
      */
-    private int countUnnamedGroups() {
-    	// include unnamed capture groups, exclude non-capturing groups
-		String patt = namedPattern;
-		int numGroups = 0;
-		int sz = patt.length();
-		int i = -1;
-		
-		// count all the left-parens without "(?"
-		while ((i = patt.indexOf("(", i+1)) >= 0) {
-			
-			// ignore escaped paren
-			if ((i > 0) && (patt.charAt(i - 1) == '\\')) {
-				continue;
-			}
-			// ignore non-capturing groups
-			if ((i + 1 < sz) && (patt.charAt(i+1) == '?')) {
-				continue;
-			}
-			if (i >= sz - 1) break;
-			
-			numGroups++;
-		}
-		return numGroups;
+    public int indexOf(String groupName, int index) {
+    	int idx = -1;
+    	if (groupInfo.containsKey(groupName)) {
+    		List<GroupInfo> list = groupInfo.get(groupName);
+    		if (index < list.size()) {
+    			idx = list.get(index).groupIndex();
+    		}
+    	}
+    	return idx;
     }
-    
+        
     /**
      * Returns this pattern's match flags
      * 
@@ -147,18 +152,22 @@ public class NamedPattern {
 	 * @return the list of names
 	 */
 	public List<String> groupNames() {
+		if (groupNames == null) {
+			groupNames = new ArrayList<String>(groupInfo.keySet());
+		}
 		return groupNames;
 	}
-
-	/**
-	 * Gets the number of unnamed capture groups in this pattern
-	 * 
-	 * @return the count
-	 */
-	public int unnamedGroupCount() {
-		return numUnnamedGroups;
-	}
 	
+	/**
+	 * Gets the names and group info (group index and string position 
+	 * within the named pattern) of all named capture groups
+	 * 
+	 * @return a map of group names and their info
+	 */
+	public Map<String, List<GroupInfo>> groupInfo() {
+		return groupInfo;
+	}
+
 	/**
 	 * Splits the given input sequence around matches of this pattern.
 	 * 
@@ -210,18 +219,104 @@ public class NamedPattern {
 	}
 
 	/**
-	 * Parses the group names from a pattern
+	 * Determines if the parenthesis at the specified position
+	 * of a string is escaped with a foreslash
+	 * 
+	 * @param s string to evaluate
+	 * @param pos the position of the parenthesis to evaluate
+	 * @return true if the parenthesis is escaped; otherwise false
+	 */
+	static private boolean isEscapedParen(String s, int pos) {
+		return (pos > 0) && (s.charAt(pos - 1) == '\\');
+	}
+	
+	/**
+	 * Determines if the parenthesis at the specified position
+	 * of a string is for a non-capturing group, which is one of
+	 * the flag specifiers (e.g., (?s) or (?m) or (?:pattern).
+	 * If the parenthesis is followed by "?" and not "?<", it 
+	 * must be a non-capturing group.
+	 * 
+	 * @param s string to evaluate
+	 * @param pos the position of the parenthesis to evaluate
+	 * @return true if the parenthesis is non-capturing; otherwise false
+	 */
+	static private boolean isNoncapturingParen(String s, int pos) {
+		return (pos >= 0 && pos < s.length() - 3) &&
+				s.charAt(pos + 1) == '?' &&
+				s.charAt(pos + 2) != '<';
+	}
+	
+	/**
+	 * Counts the open-parentheses to the left of a string position,
+	 * excluding escaped parentheses
+	 * 
+	 * @param s string to evaluate
+	 * @param pos ending position of string
+	 * @return number of open parentheses 
+	 */
+	static private int countOpenParens(String s, int pos) {
+		Pattern p = Pattern.compile("\\(");
+		Matcher m = p.matcher(s.subSequence(0, pos));
+		
+		int numParens = 0;
+		
+		while (m.find()) {
+			String match = m.group(0);
+			
+			// ignore escaped parens
+			if (isEscapedParen(s, m.start())) continue;
+			
+			if (match.equals("(") && !isNoncapturingParen(s, m.start())) {
+				numParens++;
+			}
+		}
+		return numParens;
+	}
+	
+	/**
+	 * Parses info on named capture groups from a pattern
 	 * 
 	 * @param namedPattern regex the regular expression pattern to parse
-	 * @return the group names
+	 * @return list of group info for all named groups
 	 */
-	static List<String> extractGroupNames(String namedPattern) {
-		List<String> groupNames = new ArrayList<String>();
+	static public Map<String,List<GroupInfo>> extractGroupInfo(String namedPattern) {
+//		ListMultimap<String,GroupInfo> groupInfo = LinkedListMultimap.create();
+//		Matcher matcher = NAMED_GROUP_PATTERN.matcher(namedPattern);
+//		while(matcher.find()) {
+//			
+//			int pos = matcher.start();
+//			
+//			// ignore escaped paren
+//			if (isEscapedParen(namedPattern, pos)) continue;
+//			
+//			String name = matcher.group(1);
+//			int groupIndex = countOpenParens(namedPattern, pos);
+//			groupInfo.put(name, new GroupInfo(groupIndex, pos));
+//		}
+//		return groupInfo;
+		Map<String,List<GroupInfo>> groupInfo = new LinkedHashMap<String,List<GroupInfo>>();
 		Matcher matcher = NAMED_GROUP_PATTERN.matcher(namedPattern);
 		while(matcher.find()) {
-			groupNames.add(matcher.group(1));
+			
+			int pos = matcher.start();
+			
+			// ignore escaped paren
+			if (isEscapedParen(namedPattern, pos)) continue;
+			
+			String name = matcher.group(1);
+			int groupIndex = countOpenParens(namedPattern, pos);
+			
+			List<GroupInfo> list;
+			if (groupInfo.containsKey(name)) {
+				list = groupInfo.get(name);
+			} else {
+				list = new ArrayList<GroupInfo>();
+			}
+			list.add(new GroupInfo(groupIndex, pos));
+			groupInfo.put(name, list);
 		}
-		return groupNames;
+		return groupInfo;
 	}
 
 	/**
@@ -231,12 +326,46 @@ public class NamedPattern {
      * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS 
 	 * @return
 	 */
-	static Pattern buildStandardPattern(String namedPattern, Integer flags) {
-		if (flags == null) {
-			return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("));
-		} else {
-			return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("), flags);
-		}
+	static private Pattern buildStandardPattern(String namedPattern, Integer flags) {
+		return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("), flags);
 	}
 
+}
+
+/**
+ * Contains the position and group index of capture groups
+ * from a named pattern
+ */
+class GroupInfo implements Comparable<GroupInfo> {
+	private int pos;
+	private int groupIndex;
+	
+	public GroupInfo(int groupIndex, int pos) {
+		this.groupIndex = groupIndex;
+		this.pos = pos;
+	}
+	
+	public int pos() { return pos; }
+	public int groupIndex() { return groupIndex; }
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof GroupInfo)) return false;
+		
+		return hashCode() == ((GroupInfo)obj).hashCode();
+	}
+	
+	@Override
+	public int hashCode() {
+		return Integer.valueOf(pos).hashCode() ^ Integer.valueOf(groupIndex).hashCode();
+	}
+
+	@Override
+	public int compareTo(GroupInfo info) {
+		if (pos == info.pos) {
+			return info.groupIndex - groupIndex;
+		}
+		return info.pos - pos;
+	}
 }

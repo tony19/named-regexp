@@ -1,9 +1,23 @@
+/**
+ * Copyright (C) 2012 The named-regexp Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.google.code.regexp;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,6 +26,9 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.*;
 
+/**
+ * Tests {@link NamedMatcher}
+ */
 public class NamedMatcherTest {
 
     private List<NamedPattern> patterns = newArrayList();
@@ -88,71 +105,88 @@ public class NamedMatcherTest {
         }
     }
 
-    // original test fails...ignore for now
-    @Ignore
     @Test
-    public void testNamedGroups() {
-        int k = 0;
-        for (Map.Entry<String, NamedMatcher> entry : goodMatchers.entries()) {
-            List<String> groupNames = Patterns.groupNames.get(k++);
-            assertTrue(entry.getValue() + " does not match " + entry.getKey(), entry.getValue().matches());
-            NamedMatcher matcher = entry.getValue();
-            Map<String, String> namedGroups = matcher.namedGroups();
-            assertEquals("Group count is not right", matcher.groupCount(), namedGroups.size());
-            assertTrue("Unknown matching groups", groupNames.containsAll(namedGroups.keySet()));
-            int i = 0;
-            for (String group : namedGroups.values()) {
-                assertEquals("Group does not match", matcher.group(1 + i++), group);
-            }
-        }
+    public void testFindSuccess() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfoo");
+    	assertTrue(m.find());
+    }
+
+    @Test
+    public void testFindFail() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("hello");
+    	assertFalse(m.find());
     }
     
-    @Ignore
-    @Test
-    public void testGroupString() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    @Ignore
-    @Test
-    public void testStartString() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    @Ignore
-    @Test
-    public void testEndString() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    @Ignore
-    @Test
-    public void testFind() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    @Ignore
     @Test
     public void testToMatchResult() {
-        fail("Not yet implemented"); // TODO
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfoo");
+    	
+    	m.find();
+    	NamedMatchResult r = m.toMatchResult();
+    	assertNotNull(r);
+    	
+    	assertEquals("foo", r.group("named"));
+    	
+    	assertEquals(0, r.start());
+    	assertEquals(3, r.start("named"));
+    	assertEquals(6, r.end());
+    	assertEquals(6, r.end("named"));
     }
 
-    @Ignore
     @Test
     public void testUsePattern() {
-        fail("Not yet implemented"); // TODO
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+    	NamedMatcher m = p.matcher("xyzabcxabcx");
+    	m.find();
+    	assertEquals(3, m.start());
+    	m.find();
+    	assertEquals(7, m.start());
+    	
+    	// no more matches, m.find() should return false
+    	assertFalse(m.find());
+    	
+    	m.usePattern(NamedPattern.compile("xy(?<named>z)"));
+    	m.reset();
+    	m.find();
+    	assertEquals(0, m.start());
     }
 
-    @Ignore
     @Test
     public void testReset() {
-        fail("Not yet implemented"); // TODO
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+    	NamedMatcher m = p.matcher("abcxabcx");
+    	
+    	// advance find to last match
+    	while(m.find());
+    	
+    	// resetting should force m.find() to search from beginning
+    	m.reset();
+    	
+    	m.find();
+    	assertEquals(0, m.start());
     }
 
-    @Ignore
     @Test
     public void testResetCharSequence() {
-        fail("Not yet implemented"); // TODO
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+    	NamedMatcher m = p.matcher("abcxabcx");
+    	
+    	// make sure at least one match is found and then advance
+    	// find to the end
+    	assertTrue(m.find());
+    	while(m.find());
+    	
+    	m.reset("dummy.*pattern");
+    	
+    	assertFalse(m.find());
+    	
+    	// move matching pattern to a diff position than original
+    	m.reset("hello world abcx foo bar");
+    	assertTrue(m.find());
+    	assertEquals(12, m.start());
     }
 
     @Test(expected = IllegalStateException.class)
@@ -169,7 +203,7 @@ public class NamedMatcherTest {
     public void testNamedGroupAfterUnnamedAndNoncaptureGroups() {
     	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
     	NamedMatcher m = p.matcher("abcx");
-    	assertTrue(m.find());
+    	m.find();
     	assertEquals("x", m.group("named"));
     }
     
@@ -177,7 +211,7 @@ public class NamedMatcherTest {
     public void testNamedGroupAfterUnnamedGroups() {
     	NamedPattern p = NamedPattern.compile("(?:c)(?<named>x)");
     	NamedMatcher m = p.matcher("abcx");
-    	assertTrue(m.find());
+    	m.find();
     	assertEquals("x", m.group("named"));
     }
     
@@ -185,7 +219,31 @@ public class NamedMatcherTest {
     public void testNamedGroupAfterNoncaptureGroups() {
     	NamedPattern p = NamedPattern.compile("(?:c)(?<named>x)");
     	NamedMatcher m = p.matcher("abcx");
-    	assertTrue(m.find());
+    	m.find();
+    	assertEquals("x", m.group("named"));
+    }
+    
+    @Test
+    public void testNamedGroupOnly() {
+    	NamedPattern p = NamedPattern.compile("(?<named>x)");
+    	NamedMatcher m = p.matcher("abcx");
+    	m.find();
+    	assertEquals("x", m.group("named"));
+    }
+    
+    @Test
+    public void testMatchNamedGroupAfterAnotherNamedGroup() {
+    	NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<named>x)");
+    	NamedMatcher m = p.matcher("abcx");
+    	m.find();
+    	assertEquals("x", m.group("named"));
+    }
+    
+    @Test
+    public void testIndexOfNestedNamedGroup() {
+    	NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+    	NamedMatcher m = p.matcher("abcdx");
+    	m.find();
     	assertEquals("x", m.group("named"));
     }
 }
