@@ -21,20 +21,22 @@ Usage
  1. Replace `java.util.regex.Pattern` and `java.util.regex.Matcher` with `NamedPattern` and `NamedMatcher`, respectively.
  2. Use `(?<name>...)` to specify a named capture group as in the following code example:
 
-	public static void main(String[] args) {
-		String input = "hello world!";
-		String regex = "(?<foo>world)"; // contains capture group named "foo"
-		boolean found;
-		
-		NamedPattern pattern = NamedPattern.compile(regex);
-		NamedMatcher matcher = pattern.matcher(input);
-		
-		found = matcher.find();
-		System.out.println("Input: " + input);
-		System.out.println("Regex: " + regex);
-		System.out.println("Found: " + found);
+<pre>
+public static void main(String[] args) {
+	String input = "hello world!";
+	String regex = "(?<foo>world)"; // contains capture group named "foo"
+	boolean found;
 	
-		if (found) {
-			System.out.println("Captured: " + matcher.group("foo"));
-		}
+	NamedPattern pattern = NamedPattern.compile(regex);
+	NamedMatcher matcher = pattern.matcher(input);
+	
+	found = matcher.find();
+	System.out.println("Input: " + input);
+	System.out.println("Regex: " + regex);
+	System.out.println("Found: " + found);
+
+	if (found) {
+		System.out.println("Captured: " + matcher.group("foo"));
 	}
+}
+</pre>
