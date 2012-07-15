@@ -24,7 +24,7 @@ Usage
 <pre>
 public static void main(String[] args) {
 	String input = "hello world!";
-	String regex = "(?<foo>world)"; // contains capture group named "foo"
+	String regex = "(?&lt;foo>world)"; // contains capture group named "foo"
 	boolean found;
 	
 	NamedPattern pattern = NamedPattern.compile(regex);
