@@ -12,7 +12,7 @@ License
 
 Download
 ========
-[named-regexp-0.1.6.jar](https://github.com/downloads/tony19/named-regexp/named-regexp-0.1.6.jar)
+[named-regexp-0.1.6.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.6/named-regexp-0.1.6.jar)
 
 
 Usage
