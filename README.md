@@ -1,4 +1,4 @@
-named-regexp 0.1.5
+named-regexp 0.1.6
 ==================
 This library is a wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
@@ -12,7 +12,7 @@ License
 
 Download
 ========
-[named-regexp-0.1.5.jar](https://github.com/downloads/tony19/named-regexp/named-regexp-0.1.5.jar)  MD5: f149670b75026cfd9f4aac169594a882
+[named-regexp-0.1.6.jar](https://github.com/downloads/tony19/named-regexp/named-regexp-0.1.6.jar)
 
 
 Usage

@@ -10,7 +10,7 @@
 	
 	<groupId>com.github.tony19</groupId>
 	<artifactId>named-regexp</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>named-regexp</name>
 	<description>Named capturing groups for Java 5/6</description>
 	<version>0.1.6-SNAPSHOT</version>
