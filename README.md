@@ -5,24 +5,6 @@ This library is a thin wrapper for `java.util.regex`, implementing named capture
 This is a fork of the [named-regexp](http://code.google.com/p/named-regexp) project, including several bug fixes.
 
 
-License
-=======
-[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-
-Download
-========
-[named-regexp-0.1.7.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.7/named-regexp-0.1.7.jar)
-
-
-Build
-=====
-
-To build, use Maven 2+:
-
-    $ mvn package
-
-
 Usage
 =====
 
@@ -32,7 +14,7 @@ _Maven dependency_
 &lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
-  &lt;version>${named.regexp.version}&lt;/version>
+  &lt;version>0.1.7&lt;/version>
 &lt;/dependency>
 </pre>
 
@@ -61,3 +43,21 @@ public static void main(String[] args) {
 	}
 }
 </pre>
+
+
+Download
+========
+[named-regexp-0.1.7.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.7/named-regexp-0.1.7.jar)
+
+
+Build
+=====
+
+To build, use Maven 2+:
+
+    $ mvn package
+
+
+License
+=======
+[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
