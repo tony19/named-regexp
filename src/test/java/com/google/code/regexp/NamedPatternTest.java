@@ -96,6 +96,54 @@ public class NamedPatternTest {
     }
     
     @Test
+    public void testIndexOfWithPositiveLookbehind() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?<=c)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfWithNegativeLookbehind() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?<!c)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfWithPositiveLookahead() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?=c)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfWithNegativeLookahead() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?!c)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfWithFlags() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?idsumx)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfWithFlagsAndExtraNoCapture() {
+    	NamedPattern p = NamedPattern.compile("(a)(b)(?idsumx:Z)(?<named>x)");
+    	assertEquals(2, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfNamedGroupAtBeginning() {
+    	NamedPattern p = NamedPattern.compile("(?<named>x)(a)(b)(?:c)");
+    	assertEquals(0, p.indexOf("named"));
+    }
+    
+    @Test
+    public void testIndexOfNamedGroupAtMiddle() {
+    	NamedPattern p = NamedPattern.compile("(a)(?<named>x)(b)(?:c)");
+    	assertEquals(1, p.indexOf("named"));
+    }
+    
+    @Test
     public void testNamedPatternGetsOriginalPattern() {
     	final String ORIG_PATT = "(a)(b)(?:c)(?<named>x)";
     	NamedPattern p = NamedPattern.compile(ORIG_PATT);
@@ -111,7 +159,7 @@ public class NamedPatternTest {
     }
     
     @Test
-    public void testNamedPatternAfterSpecialConstruct1() {
+    public void testNamedPatternAfterFlagsAndLookarounds() {
     	final String ORIG_PATT = "(?idsumx-idsumx)(?=b)(?!x)(?<named>x)";
     	NamedPattern p = NamedPattern.compile(ORIG_PATT);
     	assertEquals(ORIG_PATT, p.namedPattern());
@@ -136,16 +184,23 @@ public class NamedPatternTest {
     }
     
     @Test
-    public void testGroupInfo() {
+    public void testGroupInfoMapHasNamesAsKeys() {
     	final String PATT = "(foo)(?<X>a)(?<Y>b)(bar)(?<Z>c)(?<Z>d)"; // two groups named "Z"
     	NamedPattern p = NamedPattern.compile(PATT);
     	Map<String,List<GroupInfo>> map = p.groupInfo();
     	assertNotNull(map);
     	assertEquals(3, map.size());
-    	
     	assertTrue(map.containsKey("X"));
     	assertTrue(map.containsKey("Y"));
     	assertTrue(map.containsKey("Z"));
+    }
+    
+    @Test
+    public void testGroupInfoMapHasCorrectPosAndGroupIndex() {
+    	final String PATT = "(foo)(?<X>a)(?<Y>b)(bar)(?<Z>c)(?<Z>d)"; // two groups named "Z"
+    	NamedPattern p = NamedPattern.compile(PATT);
+    	Map<String,List<GroupInfo>> map = p.groupInfo();
+    	assertNotNull(map);
     	
     	GroupInfo[] inf = (GroupInfo[])map.get("X").toArray(new GroupInfo[0]);
     	assertEquals(1, inf.length);
@@ -157,6 +212,7 @@ public class NamedPatternTest {
     	assertEquals(PATT.indexOf("(?<Y>"), inf2[0].pos());
     	assertEquals(2, inf2[0].groupIndex());
     	
+    	// test both Z groups
     	GroupInfo[] inf3 = (GroupInfo[])map.get("Z").toArray(new GroupInfo[0]);
     	assertEquals(2, inf3.length);
     	int posZ = PATT.indexOf("(?<Z>");
@@ -164,6 +220,5 @@ public class NamedPatternTest {
     	assertEquals(4, inf3[0].groupIndex());
     	assertEquals(PATT.indexOf("(?<Z>", posZ+1), inf3[1].pos());
     	assertEquals(5, inf3[1].groupIndex());
-    	
     }
 }

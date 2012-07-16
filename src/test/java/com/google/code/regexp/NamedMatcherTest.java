@@ -15,96 +15,17 @@
  */
 package com.google.code.regexp;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.junit.Before;
+import java.util.List;
+
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.*;
 
 /**
  * Tests {@link NamedMatcher}
  */
 public class NamedMatcherTest {
-
-    private List<NamedPattern> patterns = newArrayList();
-
-    private Multimap<String, NamedMatcher>
-            goodMatchers = HashMultimap.create(),
-            badMatchers = HashMultimap.create();
-
-    @Before
-    public void setUp() throws Exception {
-        for (String pattern : Patterns.patterns) {
-            patterns.add(NamedPattern.compile(pattern));
-        }
-
-        int i = 0;
-        for (List<String> inputs : Patterns.goodInputs) {
-            NamedPattern pattern = patterns.get(i++);
-            for (String input : inputs) {
-                goodMatchers.put(input, pattern.matcher(input));
-            }
-        }
-
-        i = 0;
-        for (List<String> inputs : Patterns.badInputs) {
-            NamedPattern pattern = patterns.get(i++);
-            for (String input : inputs) {
-                badMatchers.put(input, pattern.matcher(input));
-            }
-        }
-
-    }
-
-    @Test
-    public void testStandardPattern() {
-        int i = 0;
-        for (NamedPattern pattern : patterns) {
-            assertEquals("Standard pattern does not match", Patterns.standardPatterns.get(i++), pattern.standardPattern());
-        }
-    }
-
-    @Test
-    public void testNamedPattern() {
-        int i = 0;
-        for (NamedPattern pattern : patterns) {
-            assertEquals("Named pattern does not match", Patterns.patterns.get(i++), pattern.namedPattern());
-        }
-    }
-
-    @Test
-    public void testMatchesGoodInput() {
-        for (Map.Entry<String, NamedMatcher> entry : goodMatchers.entries()) {
-            assertTrue(entry.getValue() + " does not match " + entry.getKey(), entry.getValue().matches());
-        }
-    }
-
-    @Test
-    public void testMatchesBadInput() {
-        for (Map.Entry<String, NamedMatcher> entry : badMatchers.entries()) {
-            assertFalse(entry.getValue() + " matches " + entry.getKey() + " but shouldn't", entry.getValue().matches());
-        }
-    }
-
-    @Test
-    public void testOrderedGroups() {
-        for (Map.Entry<String, NamedMatcher> entry : goodMatchers.entries()) {
-            assertTrue(entry.getValue() + " does not match " + entry.getKey(), entry.getValue().matches());
-            NamedMatcher matcher = entry.getValue();
-            List<String> orderedGroups = matcher.orderedGroups();
-            assertEquals("Group count is not right", matcher.groupCount(), orderedGroups.size());
-            int i = 0;
-            for (String group : orderedGroups) {
-                assertEquals("Group does not match", matcher.group(1 + i++), group);
-            }
-        }
-    }
-
+	
     @Test
     public void testFindSuccess() {
     	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
@@ -118,7 +39,39 @@ public class NamedMatcherTest {
     	NamedMatcher m = p.matcher("hello");
     	assertFalse(m.find());
     }
-    
+
+	@Test
+	public void testStartPositionWithGroupName() {
+		NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfooxyz");
+    	m.find();
+    	assertEquals(3, m.start("named"));
+	}
+	
+	@Test
+	public void testStartPositionWithGroupIndex() {
+		NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfooxyz");
+    	m.find();
+    	assertEquals(1, m.start(2)); // 2 = index of (b)
+	}
+	
+	@Test
+	public void testEndPositionWithGroupName() {
+		NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfooxyz");
+    	m.find();
+    	assertEquals(6, m.end("named"));
+	}
+	
+	@Test
+	public void testEndPositionWithGroupIndex() {
+		NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfooxyz");
+    	m.find();
+    	assertEquals(2, m.end(2)); // 2 = index of (b)
+	}
+	
     @Test
     public void testToMatchResult() {
     	NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
@@ -246,4 +199,16 @@ public class NamedMatcherTest {
     	m.find();
     	assertEquals("x", m.group("named"));
     }
+    
+	@Test
+	public void testOrderedGroupsHasMatchesInOrder() {
+		NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
+    	NamedMatcher m = p.matcher("abcfoo");
+    	m.find();
+    	List<String> matches = m.orderedGroups();
+    	assertEquals(3, matches.size());
+    	assertEquals("a", matches.get(0));
+    	assertEquals("b", matches.get(1));
+    	assertEquals("foo", matches.get(2));
+	}
 }

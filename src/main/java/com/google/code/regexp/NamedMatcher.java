@@ -235,7 +235,7 @@ public class NamedMatcher implements NamedMatchResult {
 	}
 
 	/**
-	 * Gets a list of the matches in the order in which they were occur
+	 * Gets a list of the matches in the order in which they occur
 	 * in a matching input string
 	 * 
 	 * @return the matches

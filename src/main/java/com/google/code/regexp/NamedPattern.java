@@ -220,7 +220,7 @@ public class NamedPattern {
 
 	/**
 	 * Determines if the parenthesis at the specified position
-	 * of a string is escaped with a foreslash
+	 * of a string is escaped with a backslash
 	 * 
 	 * @param s string to evaluate
 	 * @param pos the position of the parenthesis to evaluate
@@ -234,17 +234,25 @@ public class NamedPattern {
 	 * Determines if the parenthesis at the specified position
 	 * of a string is for a non-capturing group, which is one of
 	 * the flag specifiers (e.g., (?s) or (?m) or (?:pattern).
-	 * If the parenthesis is followed by "?" and not "?<", it 
-	 * must be a non-capturing group.
+	 * If the parenthesis is followed by "?", it must be a non-
+	 * capturing group unless it's a named group (which begins
+	 * with "?<"). Make sure not to confuse it with the lookbehind
+	 * construct ("?<=" or "?<!").
 	 * 
 	 * @param s string to evaluate
 	 * @param pos the position of the parenthesis to evaluate
 	 * @return true if the parenthesis is non-capturing; otherwise false
 	 */
 	static private boolean isNoncapturingParen(String s, int pos) {
-		return (pos >= 0 && pos < s.length() - 3) &&
+		int len = s.length();
+		boolean isLookbehind = false;
+		if (pos >= 0 && pos + 4 < len) {
+			String pre = s.substring(pos, pos+4);
+			isLookbehind = pre.equals("(?<=") || pre.equals("(?<!");
+		}
+		return (pos >= 0 && pos + 2 < len) &&
 				s.charAt(pos + 1) == '?' &&
-				s.charAt(pos + 2) != '<';
+				(isLookbehind || s.charAt(pos + 2) != '<');
 	}
 	
 	/**
@@ -281,20 +289,6 @@ public class NamedPattern {
 	 * @return list of group info for all named groups
 	 */
 	static public Map<String,List<GroupInfo>> extractGroupInfo(String namedPattern) {
-//		ListMultimap<String,GroupInfo> groupInfo = LinkedListMultimap.create();
-//		Matcher matcher = NAMED_GROUP_PATTERN.matcher(namedPattern);
-//		while(matcher.find()) {
-//			
-//			int pos = matcher.start();
-//			
-//			// ignore escaped paren
-//			if (isEscapedParen(namedPattern, pos)) continue;
-//			
-//			String name = matcher.group(1);
-//			int groupIndex = countOpenParens(namedPattern, pos);
-//			groupInfo.put(name, new GroupInfo(groupIndex, pos));
-//		}
-//		return groupInfo;
 		Map<String,List<GroupInfo>> groupInfo = new LinkedHashMap<String,List<GroupInfo>>();
 		Matcher matcher = NAMED_GROUP_PATTERN.matcher(namedPattern);
 		while(matcher.find()) {
@@ -332,40 +326,3 @@ public class NamedPattern {
 
 }
 
-/**
- * Contains the position and group index of capture groups
- * from a named pattern
- */
-class GroupInfo implements Comparable<GroupInfo> {
-	private int pos;
-	private int groupIndex;
-	
-	public GroupInfo(int groupIndex, int pos) {
-		this.groupIndex = groupIndex;
-		this.pos = pos;
-	}
-	
-	public int pos() { return pos; }
-	public int groupIndex() { return groupIndex; }
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (!(obj instanceof GroupInfo)) return false;
-		
-		return hashCode() == ((GroupInfo)obj).hashCode();
-	}
-	
-	@Override
-	public int hashCode() {
-		return Integer.valueOf(pos).hashCode() ^ Integer.valueOf(groupIndex).hashCode();
-	}
-
-	@Override
-	public int compareTo(GroupInfo info) {
-		if (pos == info.pos) {
-			return info.groupIndex - groupIndex;
-		}
-		return info.pos - pos;
-	}
-}
