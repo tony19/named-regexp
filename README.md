@@ -15,11 +15,27 @@ Download
 [named-regexp-0.1.7.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.7/named-regexp-0.1.7.jar)
 
 
+Build
+=====
+
+To build, use Maven 2+:
+
+    $ mvn package
+
+
 Usage
 =====
 
- 1. Replace `java.util.regex.Pattern` and `java.util.regex.Matcher` with `NamedPattern` and `NamedMatcher`, respectively.
- 2. Use `(?<name>...)` to specify a named capture group as in the following code example:
+  1. Add the `named-regexp` dependency to your `pom.xml`.
+  
+	&lt;dependency>
+	  &lt;groupId>com.github.tony19&lt;/groupId>
+	  &lt;artifactId>named-regexp&lt;/artifactId>
+	  &lt;version>${named.regexp.version}&lt;/version>
+	&lt;/dependency>
+
+ 2. Replace `java.util.regex.Pattern` and `java.util.regex.Matcher` with `NamedPattern` and `NamedMatcher`, respectively.
+ 3. Use `(?<name>...)` to specify a named capture group as in the following code example:
 
 <pre>
 public static void main(String[] args) {
