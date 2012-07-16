@@ -1,8 +1,8 @@
 named-regexp 0.1.7
 ==================
-This library is a wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
+This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
-This is a fork of the [named-regexp](http://code.google.com/p/named-regexp) project that fixes several bugs.
+This is a fork of the [named-regexp](http://code.google.com/p/named-regexp) project, including several bug fixes.
 
 
 License
@@ -26,14 +26,19 @@ To build, use Maven 2+:
 Usage
 =====
 
-  1. Add the `named-regexp` dependency to your `pom.xml`.
-  
-	&lt;dependency>
-	  &lt;groupId>com.github.tony19&lt;/groupId>
-	  &lt;artifactId>named-regexp&lt;/artifactId>
-	  &lt;version>${named.regexp.version}&lt;/version>
-	&lt;/dependency>
+_Maven dependency_
 
+<pre>
+&lt;dependency>
+  &lt;groupId>com.github.tony19&lt;/groupId>
+  &lt;artifactId>named-regexp&lt;/artifactId>
+  &lt;version>${named.regexp.version}&lt;/version>
+&lt;/dependency>
+</pre>
+
+_Steps_
+
+ 1. Add the `named-regexp` dependency to your `pom.xml`.
  2. Replace `java.util.regex.Pattern` and `java.util.regex.Matcher` with `NamedPattern` and `NamedMatcher`, respectively.
  3. Use `(?<name>...)` to specify a named capture group as in the following code example:
 
