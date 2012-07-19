@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="named-regexp : Named capture groups for Java 5/6 regular expressions" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>named-regexp</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/tony19/named-regexp">View on GitHub</a>
+
+          <h1 id="project_title">named-regexp</h1>
+          <h2 id="project_tagline">Named capture groups for Java 5/6 regular expressions</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/tony19/named-regexp/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/tony19/named-regexp/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>about!</h3>
+
+<p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> but with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
+
+<h3>snippet.</h3>
+
+<p>The construct for named groups is the same as in Java 7: <strong><code>(?&lt;name&gt;...)</code></strong>, as shown below.</p>
+
+<pre><code>NamedPattern p = NamedPattern.compile("abc(?&lt;foo&gt;\\d+)xyz");
+NamedMatcher m = p.matcher("abc123xyz");
+if (m.find()) {
+    System.out.println("found '" + m.group("foo") + "'"); // prints "found: '123'"
+} else {
+    System.out.println("nothing found...sorry :[");
+}
+</code></pre>
+
+<h3>help?</h3>
+
+<p>Post a question on <a href="http://stackoverflow.com"><strong>StackOverflow</strong></a> and tag it with <strong>named-regexp</strong>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">named-regexp maintained by <a href="https://github.com/tony19">tony19</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-27964159-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
