@@ -1,4 +1,4 @@
-named-regexp 0.1.7
+named-regexp 0.1.8
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
@@ -14,7 +14,7 @@ _Maven dependency_
 &lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
-  &lt;version>0.1.7&lt;/version>
+  &lt;version>0.1.8&lt;/version>
 &lt;/dependency>
 </pre>
 
@@ -47,7 +47,7 @@ public static void main(String[] args) {
 
 Download
 ========
-[named-regexp-0.1.7.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.7/named-regexp-0.1.7.jar)
+[named-regexp-0.1.8.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.8/named-regexp-0.1.8.jar)
 
 
 Build
