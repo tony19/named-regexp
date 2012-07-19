@@ -244,4 +244,18 @@ public class NamedPatternTest {
     	NamedPattern p = NamedPattern.compile(PATT);
     	assertEquals("\\\\(abc)", p.standardPattern());
     }
+    
+    @Test
+    public void testIgnoresPatternWithOddNumberEscapes() {
+    	final String PATT = "\\\\\\(?<name>abc\\)";
+    	NamedPattern p = NamedPattern.compile(PATT);
+    	assertEquals(PATT, p.standardPattern());
+    }
+    
+    @Test
+    public void testTakesPatternWithOddNumberEscapesButWithSpace() {
+    	final String PATT = "\\ \\\\(?<name>abc)";
+    	NamedPattern p = NamedPattern.compile(PATT);
+    	assertEquals("\\ \\\\(abc)", p.standardPattern());
+    }
 }

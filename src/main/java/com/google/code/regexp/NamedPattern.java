@@ -227,8 +227,17 @@ public class NamedPattern {
 	 * @return true if the parenthesis is escaped; otherwise false
 	 */
 	static private boolean isEscapedParen(String s, int pos) {
-		return (pos > 0 && pos < s.length()) && (s.charAt(pos - 1) == '\\') 
-				&& !((pos >= 2) && (s.charAt(pos - 2) == '\\'));
+		
+		// Count the backslashes preceding this position. If it's
+		// even, there is no escape and the slashes are just literals.
+		// If it's odd, one of the slashes (the last one) is escaping
+		// the parenthesis at the given position.
+		int numSlashes = 0;
+		while (pos > 0 && (s.charAt(pos - 1) == '\\')) {
+			pos--;
+			numSlashes++;
+		}
+		return numSlashes % 2 != 0;
 	}
 	
 	/**
