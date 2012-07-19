@@ -2,7 +2,7 @@ named-regexp 0.1.8
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
-This is a fork of the [named-regexp](http://code.google.com/p/named-regexp) project, including several bug fixes.
+This is a fork of the [named-regexp][1] project, including several bug fixes.
 
 
 Usage
@@ -61,3 +61,35 @@ To build, use Maven 2+:
 License
 =======
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+
+Changelog
+=========
+
+__0.1.8__ (18 July 2012)
+ * Fixed bug where escaped parentheses were processed anyway
+
+__0.1.7__ (16 July 2012)
+ * Fixed invalid group value when named group was preceded by lookarounds
+
+__0.1.6__ (15 July 2012)
+ * Identical to 0.1.5 (cosmetic)
+
+__0.1.5__ (15 July 2012)
+ * Fixed query result of named groups
+
+__0.1.4__ (15 July 2012)
+ * Fixed bug where escaped parentheses and some special constructs were still counted as capture groups
+
+__0.1.3__ (15 July 2012)
+ * Fixed bug where some noncapturing constructs were still counted as capture groups
+
+__0.1.2__ (14 July 2012)
+ * Fixed bug that hid regex flags from underlying `Pattern` class
+ * Fixed invalid group value when named group preceded by unnamed group
+ * Fixed `IndexOutOfBoundsException` when querying named groups
+
+__0.1.1__ (14 July 2012)
+ * Initial commit (forked from [Google code][1])
+ 
+[1]: http://code.google.com/p/named-regexp
