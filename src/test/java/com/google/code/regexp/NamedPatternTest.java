@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.junit.Test;
 
@@ -220,5 +221,27 @@ public class NamedPatternTest {
     	assertEquals(4, inf3[0].groupIndex());
     	assertEquals(PATT.indexOf("(?<Z>", posZ+1), inf3[1].pos());
     	assertEquals(5, inf3[1].groupIndex());
+    }
+    
+    @Test(expected = PatternSyntaxException.class)
+    public void testEscapedLeftParenCausesPatternException() {
+    	final String PATT = "\\(?<name>abc)";
+    	NamedPattern.compile(PATT);
+    }
+    
+    @Test
+    public void testIgnoresPatternWithEscapedParens() {
+    	final String PATT = "\\(?<name>abc\\)";
+    	NamedPattern p = NamedPattern.compile(PATT);
+    	assertEquals(PATT, p.standardPattern());
+    }
+    
+    @Test
+    public void testTakesPatternWithEscapedEscape() {
+    	// it looks like an escaped parenthesis, but the escape char is 
+    	// itself escaped and is thus a literal
+    	final String PATT = "\\\\(?<name>abc)";
+    	NamedPattern p = NamedPattern.compile(PATT);
+    	assertEquals("\\\\(abc)", p.standardPattern());
     }
 }

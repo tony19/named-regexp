@@ -227,7 +227,8 @@ public class NamedPattern {
 	 * @return true if the parenthesis is escaped; otherwise false
 	 */
 	static private boolean isEscapedParen(String s, int pos) {
-		return (pos > 0) && (s.charAt(pos - 1) == '\\');
+		return (pos > 0 && pos < s.length()) && (s.charAt(pos - 1) == '\\') 
+				&& !((pos >= 2) && (s.charAt(pos - 2) == '\\'));
 	}
 	
 	/**
@@ -321,7 +322,27 @@ public class NamedPattern {
 	 * @return
 	 */
 	static private Pattern buildStandardPattern(String namedPattern, Integer flags) {
-		return Pattern.compile(NAMED_GROUP_PATTERN.matcher(namedPattern).replaceAll("("), flags);
+		
+		// replace the named-group construct with left-paren but
+		// make sure we're actually looking at the construct (ignore escapes)
+		StringBuilder s = new StringBuilder(namedPattern);
+		Matcher m = NAMED_GROUP_PATTERN.matcher(s);
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+			
+			if (isEscapedParen(s.toString(), start)) {
+				continue;
+			}
+			
+			// since we're replacing the original string being matched,
+			// we have to reset the matcher so that it searches the new
+			// string
+			s.replace(start, end, "(");
+			m.reset();
+		}
+		
+		return Pattern.compile(s.toString(), flags);
 	}
 
 }
