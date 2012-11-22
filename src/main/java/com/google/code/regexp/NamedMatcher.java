@@ -264,18 +264,17 @@ public class NamedMatcher implements NamedMatchResult {
      * Gets a map of group names and match values, captured during the
      * previous match operations
      *
-     * @return the map
+     * @return the map (empty if no match found)
      */
     public Map<String, String> namedGroups() {
         Map<String, String> result = new LinkedHashMap<String, String>();
 
-        int groupCount = Math.min(groupCount(), parentPattern.groupNames().size());
-        for (int i = 1; i <= groupCount; i++) {
-            String groupName = parentPattern.groupNames().get(i-1);
-            String groupValue = matcher.group(i);
-            result.put(groupName, groupValue);
+        if (matcher.matches()) {
+            for (String groupName : parentPattern.groupNames()) {
+                String groupValue = matcher.group(groupIndex(groupName));
+                result.put(groupName, groupValue);
+            }
         }
-
         return result;
     }
 

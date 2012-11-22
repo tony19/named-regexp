@@ -16,6 +16,7 @@
 package com.google.code.regexp;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -210,5 +211,47 @@ public class NamedMatcherTest {
         assertEquals("a", matches.get(0));
         assertEquals("b", matches.get(1));
         assertEquals("foo", matches.get(2));
+    }
+
+    @Test
+    public void testNamedGroupsDoesNotThrowIndexOutOfBounds() {
+        // NamedMatcher.namedGroups() is used to get a map of
+        // group names to group values. This should ignore unnamed
+        // groups (exclude them from the map), but the unnamed
+        // groups were throwing off the function, causing it to
+        // fetch a named group at a non-existent index.
+        // See Issue #1
+        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        NamedMatcher m = p.matcher("abcdx");
+        m.find();
+        try {
+            m.namedGroups();
+            // verified here: IndexOutOfBoundsException did not occur
+        } catch (IndexOutOfBoundsException e) {
+            fail("IndexOutOfBoundsException should have been fixed");
+        }
+    }
+
+    @Test
+    public void testNamedGroupsGetsOnlyNamedGroups() {
+        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        NamedMatcher m = p.matcher("abcdxyz");
+        m.find();
+
+        Map<String, String> map = m.namedGroups();
+        assertEquals(3, map.size());
+        assertEquals("b", map.get("foo"));
+        assertEquals("dx", map.get("bar"));
+        assertEquals("x", map.get("named"));
+    }
+
+    @Test
+    public void testNamedGroupsWithNoMatchGetsEmptyMap() {
+        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        NamedMatcher m = p.matcher("nada");
+        m.find();
+
+        Map<String, String> map = m.namedGroups();
+        assertEquals(0, map.size());
     }
 }
