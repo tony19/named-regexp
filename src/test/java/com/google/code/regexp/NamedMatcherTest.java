@@ -18,7 +18,9 @@ package com.google.code.regexp;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -26,6 +28,9 @@ import static org.junit.Assert.*;
  * Tests {@link NamedMatcher}
  */
 public class NamedMatcherTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testFindSuccess() {
@@ -143,14 +148,16 @@ public class NamedMatcherTest {
         assertEquals(12, m.start());
     }
 
-    @Test(expected = IllegalStateException.class )
+    @Test
     public void testNoMatchesForNamedGroup() {
         NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
         NamedMatcher m = p.matcher("abcd");
         assertFalse(m.find());
 
         // throws IllegalStateException("No match found")
-        assertEquals(null, m.group("named"));
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("No match found");
+        m.group("named");
     }
 
     @Test

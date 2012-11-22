@@ -241,8 +241,8 @@ public class NamedMatcher implements NamedMatchResult {
      * @return the matches
      */
     public List<String> orderedGroups() {
-        ArrayList<String> groups = new ArrayList<String>();
         int groupCount = groupCount();
+        List<String> groups = new ArrayList<String>(groupCount);
         for (int i = 1; i <= groupCount; i++) {
             groups.add(group(i));
         }
@@ -285,6 +285,9 @@ public class NamedMatcher implements NamedMatchResult {
      * @return the group index
      */
     private int groupIndex(String groupName) {
+        // idx+1 because capture groups start 1 in the matcher
+        // while the pattern returns a 0-based index of the
+        // group name within the list of names
         int idx = parentPattern.indexOf(groupName);
         return idx > -1 ? idx + 1 : -1;
     }
