@@ -32,9 +32,6 @@ public class NamedMatcher implements NamedMatchResult {
     private Matcher matcher;
     private NamedPattern parentPattern;
 
-    NamedMatcher() {
-    }
-
     NamedMatcher(NamedPattern parentPattern, MatchResult matcher) {
         this.parentPattern = parentPattern;
         this.matcher = (Matcher) matcher;
@@ -261,15 +258,17 @@ public class NamedMatcher implements NamedMatchResult {
     }
 
     /**
-     * Gets a map of group names and match values, captured during the
-     * previous match operations
+     * Finds all named groups that exist in the input string. This resets the
+     * matcher and attempts to match the input against the pre-specified
+     * pattern.
      *
-     * @return the map (empty if no match found)
+     * @return a map of the group named and matched values
+     * (empty if no match found)
      */
     public Map<String, String> namedGroups() {
         Map<String, String> result = new LinkedHashMap<String, String>();
 
-        if (matcher.matches()) {
+        if (matcher.find(0)) {
             for (String groupName : parentPattern.groupNames()) {
                 String groupValue = matcher.group(groupIndex(groupName));
                 result.put(groupName, groupValue);

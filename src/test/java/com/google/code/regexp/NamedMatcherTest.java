@@ -230,7 +230,6 @@ public class NamedMatcherTest {
         // See Issue #1
         NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         NamedMatcher m = p.matcher("abcdx");
-        m.find();
         try {
             m.namedGroups();
             // verified here: IndexOutOfBoundsException did not occur
@@ -243,7 +242,6 @@ public class NamedMatcherTest {
     public void testNamedGroupsGetsOnlyNamedGroups() {
         NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         NamedMatcher m = p.matcher("abcdxyz");
-        m.find();
 
         Map<String, String> map = m.namedGroups();
         assertEquals(3, map.size());
@@ -256,7 +254,6 @@ public class NamedMatcherTest {
     public void testNamedGroupsWithNoMatchGetsEmptyMap() {
         NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         NamedMatcher m = p.matcher("nada");
-        m.find();
 
         Map<String, String> map = m.namedGroups();
         assertEquals(0, map.size());
