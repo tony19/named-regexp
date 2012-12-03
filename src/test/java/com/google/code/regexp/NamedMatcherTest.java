@@ -258,4 +258,101 @@ public class NamedMatcherTest {
         Map<String, String> map = m.namedGroups();
         assertEquals(0, map.size());
     }
+
+    @Test
+    public void testStandardPatternGetsOrigWithoutNamed() {
+        final String ORIG_PATT = "(a)(b)(?:c)(?<named>x)";
+        final String PATT_W_NO_NAMED_GRPS = "(a)(b)(?:c)(x)";
+        NamedPattern p = NamedPattern.compile(ORIG_PATT);
+        NamedMatcher m = p.matcher("abcx");
+        assertEquals(PATT_W_NO_NAMED_GRPS, m.standardPattern().pattern());
+    }
+
+    @Test
+    public void testNamedPatternCallGetsOriginalNamedPattern() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("abcx");
+        assertEquals(p, m.namedPattern());
+    }
+
+    @Test
+    public void testMatchesCallReturnsTrueForMatch() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("abcx");
+        assertTrue(m.matches());
+    }
+
+    @Test
+    public void testMatchesCallReturnsFalseForMismatch() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("foo");
+        assertFalse(m.matches());
+    }
+
+    @Test
+    public void testFindCallReturnsTrueForMatchFromBeginning() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("abcx");
+        assertTrue(m.find(0));
+    }
+
+    @Test
+    public void testFindCallReturnsFalseForMismatchFromBeginning() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("foo");
+        assertFalse(m.find(0));
+    }
+
+    @Test
+    public void testFindCallReturnsTrueForMatchFromMiddle() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("Lorem ipsum abcx dolor sit amet");
+        assertTrue(m.find(5));
+    }
+
+    @Test
+    public void testFindCallReturnsFalseForMismatchFromMiddle() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("Lorem ipsum abcXx dolor sit amet");
+        assertFalse(m.find(5));
+    }
+
+    @Test
+    public void testFindCallReturnsTrueForMatchFromEnd() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("Lorem ipsum abcx");
+        assertTrue(m.find(12));
+    }
+
+    @Test
+    public void testFindCallReturnsFalseForMismatchFromEnd() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("Lorem ipsum abcXx");
+        assertFalse(m.find(12));
+    }
+
+    @Test
+    public void testLookingAtCallReturnsTrueWhenAtMatchingText() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("abcx Lorem ipsum");
+        assertTrue(m.lookingAt());
+    }
+
+    @Test
+    public void testLookingAtCallReturnsFalseWhenAtMismatchingText() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m = p.matcher("Lorem abcx ipsum");
+        assertFalse(m.lookingAt());
+    }
 }
