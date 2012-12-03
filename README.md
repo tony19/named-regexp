@@ -1,4 +1,4 @@
-named-regexp 0.1.9 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/)
+named-regexp 0.1.8 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/)
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
@@ -20,7 +20,7 @@ _Maven dependency_
 &lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
-  &lt;version>0.1.9&lt;/version>
+  &lt;version>0.1.8&lt;/version>
 &lt;/dependency>
 </pre>
 
@@ -59,7 +59,7 @@ public class NamedRegexpTest {
 
 Download
 ========
-[named-regexp-0.1.9.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar)
+[named-regexp-0.1.8.jar](https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.8/named-regexp-0.1.8.jar)
 
 
 Build
@@ -77,9 +77,6 @@ License
 
 Changelog
 =========
-
-__0.1.9__ (23 November 2012)
- * Fixed issues in `NamedMatcher.namedGroups()`
 
 __0.1.8__ (18 July 2012)
  * Fixed bug where escaped parentheses were processed anyway
