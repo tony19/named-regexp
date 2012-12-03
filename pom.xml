@@ -1,20 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
-  
+
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
   <packaging>jar</packaging>
   <name>named-regexp</name>
   <description>Named capturing groups for Java 5/6</description>
   <version>0.1.9-SNAPSHOT</version>
-  
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -22,7 +22,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:git@github.com:tony19/named-regexp.git</connection>
     <developerConnection>scm:git:git@github.com:tony19/named-regexp.git</developerConnection>
@@ -32,17 +32,16 @@
     <system>GitHub</system>
     <url>https://github.com/tony19/named-regexp/issues</url>
   </issueManagement>
-  
+
   <developers>
     <developer>
       <id>tony19</id>
       <name>Tony Trinh</name>
       <email>tony19@gmail.com</email>
       <url>http://tony19.github.com</url>
-      <timezone>-5</timezone>
     </developer>
   </developers>
-  
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -51,11 +50,11 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -67,11 +66,11 @@
           <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.4</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -84,7 +83,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <profile>
       <id>release-sign-artifacts</id>
@@ -99,7 +98,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.1</version>
+            <version>1.4</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -113,17 +112,17 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>release</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <!-- 
-          	To disable debug compilation, debug must be "true" AND 
-          	debuglevel must be "none".
-          	http://jira.codehaus.org/browse/MCOMPILER-114 
+        <!--
+            To disable debug compilation, debug must be "true" AND
+            debuglevel must be "none".
+            http://jira.codehaus.org/browse/MCOMPILER-114
           -->
         <maven.compiler.debug>true</maven.compiler.debug>
         <maven.compiler.debuglevel>none</maven.compiler.debuglevel>
@@ -136,7 +135,7 @@
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
       </properties>
     </profile>
-    
+
   </profiles>
-  
+
 </project>
