@@ -1,4 +1,4 @@
-named-regexp 0.1.8 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/)
+named-regexp 0.1.8 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp-SNAPSHOT/)
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6. Note this isn't needed in Java 7, which already supports this feature.
 
