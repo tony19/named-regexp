@@ -348,7 +348,7 @@ public class NamedPattern {
             // we have to reset the matcher so that it searches the new
             // string
             s.replace(start, end, "(");
-            m.reset();
+            m.reset(s);
         }
 
         return Pattern.compile(s.toString(), flags);
