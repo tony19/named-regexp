@@ -67,6 +67,9 @@ public class NamedMatcher implements NamedMatchResult {
      * @return this Matcher
      */
     public NamedMatcher usePattern(NamedPattern newPattern) {
+        if (newPattern == null) {
+            throw new IllegalArgumentException("newPattern cannot be null");
+        }
         this.parentPattern = newPattern;
         matcher.usePattern(newPattern.pattern());
         return this;
@@ -470,14 +473,41 @@ public class NamedMatcher implements NamedMatchResult {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
     public boolean equals(Object obj) {
-        return matcher.equals(obj);
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof NamedMatcher)) {
+            return false;
+        }
+        NamedMatcher other = (NamedMatcher)obj;
+        if (!parentPattern.equals(other.parentPattern)) {
+            return false;
+        }
+        return matcher.equals(other.matcher);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
     public int hashCode() {
-        return matcher.hashCode();
+        return parentPattern.hashCode() ^ matcher.hashCode();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return matcher.toString();
     }

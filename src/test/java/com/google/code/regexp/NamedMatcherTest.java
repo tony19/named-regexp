@@ -355,4 +355,84 @@ public class NamedMatcherTest {
         NamedMatcher m = p.matcher("Lorem abcx ipsum");
         assertFalse(m.lookingAt());
     }
+
+    @Test
+    public void testEqualsReturnsTrueForSameMatcher() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        assertTrue(m1.equals(m1));
+    }
+
+    @Test
+    public void testEqualsReturnsFalseForTwoMatchersWithIdenticalValues() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p.matcher("Lorem abcx ipsum");
+        assertFalse(m1.equals(m2));
+    }
+
+    @Test
+    public void testEqualsReturnsFalseForTwoMatchersWithDifferentValues() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p.matcher("foo bar");
+        assertFalse(m1.equals(m2));
+    }
+
+    @Test
+    public void testEqualsReturnsFalseForTwoMatcherWithDifferentParentPatterns() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p1 = NamedPattern.compile(PATT);
+        NamedPattern p2 = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p1.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p2.matcher("Lorem abcx ipsum");
+        assertFalse(m1.equals(m2));
+    }
+
+    @Test
+    public void testEqualsReturnsFalseWhenComparedWithNull() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        assertFalse(m1.equals(null));
+    }
+
+    @Test
+    public void testEqualsReturnsFalseWhenComparedWithDifferentDataType() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        assertFalse(m1.equals(new Object()));
+    }
+
+    @Test
+    public void testHashCodeGetsUniqueHashForTwoMatchersWithIdenticalValues() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p.matcher("Lorem abcx ipsum");
+        assertFalse(m1.hashCode() == m2.hashCode());
+    }
+
+    @Test
+    public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentValues() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p.matcher("foo bar");
+        assertFalse(m1.hashCode() == m2.hashCode());
+    }
+
+    @Test
+    public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentParentPatterns() {
+        final String PATT = "(a)(b)(?:c)(?<named>x)";
+        NamedPattern p1 = NamedPattern.compile(PATT);
+        NamedPattern p2 = NamedPattern.compile(PATT);
+        NamedMatcher m1 = p1.matcher("Lorem abcx ipsum");
+        NamedMatcher m2 = p2.matcher("Lorem abcx ipsum");
+        assertFalse(m1.hashCode() == m2.hashCode());
+    }
 }

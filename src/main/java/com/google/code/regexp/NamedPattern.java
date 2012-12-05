@@ -354,5 +354,33 @@ public class NamedPattern {
         return Pattern.compile(s.toString(), flags);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof NamedPattern)) {
+            return false;
+        }
+        NamedPattern other = (NamedPattern)obj;
+        return namedPattern.equals(other.namedPattern) && pattern.flags() == other.pattern.flags();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return namedPattern.hashCode() ^ pattern.flags();
+    }
+
 }
 
