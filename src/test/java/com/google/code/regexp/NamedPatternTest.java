@@ -30,6 +30,15 @@ import org.junit.Test;
  */
 public class NamedPatternTest {
 
+    // REGEX-9, First test needs to be check for infinite loop
+    // NamedPattern.compile() (seen in Android) because all other
+    // tests rely on it.
+    @Test(timeout = 2000)
+    public void testNoInfiniteLoopInNamedPatternCompile() {
+        final String PATT = "\\ \\\\(?<name>abc)";
+        assertNotNull(NamedPattern.compile(PATT));
+    }
+
     @Test
     public void testIndexOfNamedGroup() {
         NamedPattern p = NamedPattern.compile("(?<named>x)");
@@ -258,4 +267,5 @@ public class NamedPatternTest {
         NamedPattern p = NamedPattern.compile(PATT);
         assertEquals("\\ \\\\(abc)", p.standardPattern());
     }
+
 }
