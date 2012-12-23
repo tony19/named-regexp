@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A compiled representation of a regular expression. This is a wrapper
@@ -31,6 +32,10 @@ import java.util.regex.Pattern;
 public class NamedPattern {
 
     private static final Pattern NAMED_GROUP_PATTERN = Pattern.compile("\\(\\?<(\\w+)>");
+    private static final Pattern BACKREF_NAMED_GROUP_PATTERN = Pattern.compile("\\\\k<(\\w+)>");
+
+    // index of group within patterns above where group name is captured
+    private static final int INDEX_GROUP_NAME = 1;
 
     private Pattern pattern;
     private String namedPattern;
@@ -66,8 +71,12 @@ public class NamedPattern {
      */
     private NamedPattern(String regex, int flags) {
         namedPattern = regex;
-        pattern = buildStandardPattern(regex, flags);
+
+        // group info must be parsed before building the standard pattern
+        // because the pattern relies on group info to determine the indexes
+        // of named back-references
         groupInfo = extractGroupInfo(regex);
+        pattern = buildStandardPattern(regex, flags);
     }
 
     /**
@@ -311,7 +320,7 @@ public class NamedPattern {
             // ignore escaped paren
             if (isEscapedChar(namedPattern, pos)) continue;
 
-            String name = matcher.group(1);
+            String name = matcher.group(INDEX_GROUP_NAME);
             int groupIndex = countOpenParens(namedPattern, pos);
 
             List<GroupInfo> list;
@@ -327,33 +336,76 @@ public class NamedPattern {
     }
 
     /**
-     * Constructs a named pattern with the given regular expression and flags
+     * Replaces strings matching a pattern with another string. If the string
+     * to be replaced is escaped with a slash, it is skipped.
      *
-     * @param namedPattern the expression to be compiled
-     * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
-     * @return
+     * @param input the string to evaluate
+     * @param pattern the pattern that matches the string to be replaced
+     * @param replacement the string to replace the target
+     * @return the modified string (original instance of {@code input})
      */
-    static private Pattern buildStandardPattern(String namedPattern, Integer flags) {
-
-        // replace the named-group construct with left-paren but
-        // make sure we're actually looking at the construct (ignore escapes)
-        StringBuilder s = new StringBuilder(namedPattern);
-        Matcher m = NAMED_GROUP_PATTERN.matcher(s);
+    static private StringBuilder replace(StringBuilder input, Pattern pattern, String replacement) {
+        Matcher m = pattern.matcher(input);
         while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-
-            if (isEscapedChar(s.toString(), start)) {
+            if (isEscapedChar(input.toString(), m.start())) {
                 continue;
             }
 
             // since we're replacing the original string being matched,
             // we have to reset the matcher so that it searches the new
             // string
-            s.replace(start, end, "(");
-            m.reset(s);
+            input.replace(m.start(), m.end(), replacement);
+            m.reset(input);
         }
+        return input;
+    }
 
+    /**
+     * Replaces back-referenced group names with the back-reference to the
+     * corresponding group index (e.g., {@code \k<named>} to {@code \k2})).
+     * This assumes the group names have already been parsed from the pattern.
+     * If the group name is not found, the back-reference is replaced with "\-1",
+     * and the underlying Pattern class will throw an error.
+     *
+     * @param input the string to evaluate
+     * @return the modified string (original instance of {@code input})
+     */
+    private StringBuilder replaceBackrefGroupNameWithIndex(StringBuilder input) {
+        Matcher m = BACKREF_NAMED_GROUP_PATTERN.matcher(input);
+        while (m.find()) {
+            if (isEscapedChar(input.toString(), m.start())) {
+                continue;
+            }
+
+            int index = indexOf(m.group(INDEX_GROUP_NAME));
+            if (index >= 0) {
+                index++;
+            } else {
+                throw new PatternSyntaxException("unknown group name", input.toString(), m.start(INDEX_GROUP_NAME));
+            }
+
+            // since we're replacing the original string being matched,
+            // we have to reset the matcher so that it searches the new
+            // string
+            input.replace(m.start(), m.end(), "\\" + index);
+            m.reset(input);
+        }
+        return input;
+    }
+
+    /**
+     * Constructs a named pattern with the given regular expression and flags
+     *
+     * @param namedPattern the expression to be compiled
+     * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
+     * @return
+     */
+    private Pattern buildStandardPattern(String namedPattern, Integer flags) {
+        // replace the named-group construct with left-paren but
+        // make sure we're actually looking at the construct (ignore escapes)
+        StringBuilder s = new StringBuilder(namedPattern);
+        s = replace(s, NAMED_GROUP_PATTERN, "(");
+        s = replaceBackrefGroupNameWithIndex(s);
         return Pattern.compile(s.toString(), flags);
     }
 

@@ -562,4 +562,20 @@ public class NamedMatcherTest {
         assertNotNull(M1.toString());
         assertTrue(M1.toString().trim().length() > 0);
     }
+
+    @Test
+    public void testBackrefMatches() {
+        NamedPattern p = NamedPattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
+        NamedMatcher m = p.matcher("xyz12345abc12345def");
+        assertTrue(m.find());
+        assertEquals("12345", m.group("num"));
+    }
+
+    @Test
+    public void testBackrefNoMatch() {
+        NamedPattern p = NamedPattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
+        // this should not match because the 2nd number is not equal
+        // to the first captured number
+        assertFalse(p.matcher("xyz12345abc123456def").find());
+    }
 }

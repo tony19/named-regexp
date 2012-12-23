@@ -363,8 +363,8 @@ public class NamedPatternTest {
 
     @Test
     public void testEqualsGetsTrueForSameInstance() {
-        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
-        assertTrue(p1.equals(p1));
+        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertTrue(p.equals(p));
     }
 
     @Test
@@ -372,5 +372,27 @@ public class NamedPatternTest {
         String s = NamedPattern.compile("(a)(b)(?:c)(?<named>x)").toString();
         assertNotNull(s);
         assertTrue(s.trim().length() > 0);
+    }
+
+    @Test
+    public void testCompileWithBackrefGetsStandardPatternWithCorrectGroupIndex() {
+        NamedPattern p = NamedPattern.compile("(?<foo>xyz)(?<bar>\\d+)abc\\k<bar>");
+        assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileWithUnknownBackref() {
+        thrown.expect(PatternSyntaxException.class);
+        thrown.expectMessage("unknown group name near index 11\n" +
+                             "(xyz)abc\\k<bar>\n" +
+                             "           ^");
+        NamedPattern.compile("(?<foo>xyz)abc\\k<bar>");
+    }
+
+    @Test
+    public void testCompileWithEscapedBackref() {
+        // escaped backrefs are not translated
+        NamedPattern p = NamedPattern.compile("(?<foo>xyz)(?<bar>\\d+)abc\\\\k<bar>");
+        assertEquals("(xyz)(\\d+)abc\\\\k<bar>", p.standardPattern());
     }
 }
