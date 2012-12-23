@@ -15,28 +15,34 @@
  */
 package com.google.code.regexp;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Tests {@link NamedPattern}
  */
 public class NamedPatternTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-    // REGEX-9, First test needs to be check for infinite loop
+    // REGEX-9, First test needs to check for infinite loop in
     // NamedPattern.compile() (seen in Android) because all other
     // tests rely on it.
-    @Test(timeout = 2000)
+    @Test( timeout = 2000 )
     public void testNoInfiniteLoopInNamedPatternCompile() {
-        final String PATT = "\\ \\\\(?<name>abc)";
-        assertNotNull(NamedPattern.compile(PATT));
+        assertNotNull(NamedPattern.compile("(?<named>x)"));
     }
 
     @Test
@@ -118,6 +124,18 @@ public class NamedPatternTest {
     }
 
     @Test
+    public void testIndexOfWithNegativeLookbehindAtBeginning() {
+        NamedPattern p = NamedPattern.compile("(?<!a)(b)(c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfWithPositiveLookbehindAtBeginning() {
+        NamedPattern p = NamedPattern.compile("(?<=a)(b)(c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
     public void testIndexOfWithPositiveLookahead() {
         NamedPattern p = NamedPattern.compile("(a)(b)(?=c)(?<named>x)");
         assertEquals(2, p.indexOf("named"));
@@ -151,6 +169,30 @@ public class NamedPatternTest {
     public void testIndexOfNamedGroupAtMiddle() {
         NamedPattern p = NamedPattern.compile("(a)(?<named>x)(b)(?:c)");
         assertEquals(1, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfWithMultipleGroupsWithSameName() {
+        NamedPattern p = NamedPattern.compile("(a)(?<named>x)(b)(?:c)(?<named>y)");
+        assertEquals(3, p.indexOf("named", 1));
+    }
+
+    @Test
+    public void testIndexOfWithInvalidPositiveInstanceIndex() {
+        NamedPattern p = NamedPattern.compile("(a)(?<named>x)(b)(?:c)(?<named>y)");
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage("Index: 10000000, Size: 2");
+        assertEquals(-1, p.indexOf("named", 10000000));
+    }
+
+    @Test
+    public void testIndexOfWithInvalidNegativeInstanceIndex() {
+        NamedPattern p = NamedPattern.compile("(a)(?<named>x)(b)(?:c)(?<named>y)");
+        // Negative index causes ArrayIndexOutOfBoundsException (which
+        // is a subclass of IndexOutOfBoundsException)
+        thrown.expect(ArrayIndexOutOfBoundsException.class);
+        thrown.expectMessage("-100");
+        assertEquals(-1, p.indexOf("named", -100));
     }
 
     @Test
@@ -232,7 +274,7 @@ public class NamedPatternTest {
         assertEquals(5, inf3[1].groupIndex());
     }
 
-    @Test(expected = PatternSyntaxException.class )
+    @Test(expected = PatternSyntaxException.class)
     public void testEscapedLeftParenCausesPatternException() {
         final String PATT = "\\(?<name>abc)";
         NamedPattern.compile(PATT);
@@ -268,4 +310,67 @@ public class NamedPatternTest {
         assertEquals("\\ \\\\(abc)", p.standardPattern());
     }
 
+    @Test
+    public void testCompileRegexWithFlags() {
+        final String PATT = "(?<name>abc) # comment 1";
+        int flags = Pattern.CASE_INSENSITIVE | Pattern.COMMENTS;
+        NamedPattern p = NamedPattern.compile(PATT, flags);
+        assertEquals(PATT, p.namedPattern());
+        assertEquals(flags, p.flags());
+    }
+
+    @Test
+    public void testSplitGetsArrayOfTextAroundMatches() {
+        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertArrayEquals(new String[]{"foo ", " bar "}, p.split("foo abcx bar abcx"));
+        // when the limit is specified, the last element contains
+        // the remainder of the string
+        assertArrayEquals(new String[]{"foo ", " bar abcx"}, p.split("foo abcx bar abcx", 2));
+    }
+
+    @Test
+    public void testEqualsNullGetsFalse() {
+        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertFalse(p.equals(null));
+    }
+
+    @Test
+    public void testEqualsDiffDataTypeGetsFalse() {
+        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertFalse(p.equals(new Object()));
+    }
+
+    @Test
+    public void testEqualsWithSamePatternAndFlagsGetsTrue() {
+        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        NamedPattern p2 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertTrue(p1.equals(p2));
+    }
+
+    @Test
+    public void testEqualsWithSamePatternButDiffFlagsGetsFalse() {
+        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        NamedPattern p2 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.CASE_INSENSITIVE);
+        assertFalse(p1.equals(p2));
+    }
+
+    @Test
+    public void testEqualsWithSameFlagsButDiffPatternGetsFalse() {
+        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.CANON_EQ);
+        NamedPattern p2 = NamedPattern.compile("(?<named>x)", Pattern.CANON_EQ);
+        assertFalse(p1.equals(p2));
+    }
+
+    @Test
+    public void testEqualsGetsTrueForSameInstance() {
+        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
+        assertTrue(p1.equals(p1));
+    }
+
+    @Test
+    public void testToString() {
+        String s = NamedPattern.compile("(a)(b)(?:c)(?<named>x)").toString();
+        assertNotNull(s);
+        assertTrue(s.trim().length() > 0);
+    }
 }
