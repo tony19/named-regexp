@@ -31,7 +31,8 @@ _Steps_
  3. Use `(?<name>...)` to specify a named capture group as in the following code example:
 
 <pre>
-import com.google.code.regexp;
+import com.google.code.regexp.NamedPattern;
+import com.google.code.regexp.NamedMatcher;
 
 public class NamedRegexpTest {
 
@@ -74,7 +75,6 @@ License
 =======
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-
 Changelog
 =========
 
@@ -106,3 +106,4 @@ __0.1.1__ (14 July 2012)
 
 [1]: http://code.google.com/p/named-regexp
 [2]: https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6153b1e63711b00863135b84138816f9 "githalytics.com")](http://githalytics.com/tony19/named-regexp)
