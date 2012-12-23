@@ -31,10 +31,16 @@ import java.util.regex.PatternSyntaxException;
  */
 public class NamedPattern {
 
+    /** Pattern to match named capture groups in a pattern string */
     private static final Pattern NAMED_GROUP_PATTERN = Pattern.compile("\\(\\?<(\\w+)>");
+
+    /** Pattern to match back references for named capture groups */
     private static final Pattern BACKREF_NAMED_GROUP_PATTERN = Pattern.compile("\\\\k<(\\w+)>");
 
-    // index of group within patterns above where group name is captured
+    /** Pattern to match properties for named capture groups in a replacement string */
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}");
+
+    /** index of group within patterns above where group name is captured */
     private static final int INDEX_GROUP_NAME = 1;
 
     private Pattern pattern;
@@ -174,6 +180,30 @@ public class NamedPattern {
      */
     public Map<String, List<GroupInfo> > groupInfo() {
         return groupInfo;
+    }
+
+    /**
+     * Replaces group-name properties (e.g., ${named}) in a replacement pattern with
+     * the equivalent reference that uses the corresponding group index (e.g., $2).
+     * If the string contains literal "$", it must be escaped with slash or else this
+     * call will attempt to parse it as a group-name property.
+     *
+     * This is meant to be used to transform the parameter for:
+     *  <ul>
+     *  <li>{@link Matcher#replaceAll(String)}</li>
+     *  <li>{@link Matcher#replaceFirst(String)}</li>
+     *  <li>{@link Matcher#appendReplacement(StringBuffer, String)}</li>
+     *  </ul>
+     * @param replacementPattern the input string to be evaluated
+     * @return the modified string
+     * @throws PatternSyntaxException group name was not found
+     */
+    public String replaceProperties(String replacementPattern) {
+        return replaceGroupNameWithIndex(
+                new StringBuilder(replacementPattern),
+                PROPERTY_PATTERN,
+                "$"
+                ).toString();
     }
 
     /**
@@ -361,17 +391,18 @@ public class NamedPattern {
     }
 
     /**
-     * Replaces back-referenced group names with the back-reference to the
-     * corresponding group index (e.g., {@code \k<named>} to {@code \k2})).
+     * Replaces referenced group names with the reference to the corresponding group
+     * index (e.g., {@code \k<named>} to {@code \k2}; {@code ${named} to $2})).
      * This assumes the group names have already been parsed from the pattern.
-     * If the group name is not found, the back-reference is replaced with "\-1",
-     * and the underlying Pattern class will throw an error.
      *
      * @param input the string to evaluate
+     * @param pattern the pattern that matches the string to be replaced
+     * @param prefix string to prefix to the replacement (e.g., "$" or "\\")
      * @return the modified string (original instance of {@code input})
+     * @throws PatternSyntaxException group name was not found
      */
-    private StringBuilder replaceBackrefGroupNameWithIndex(StringBuilder input) {
-        Matcher m = BACKREF_NAMED_GROUP_PATTERN.matcher(input);
+    private StringBuilder replaceGroupNameWithIndex(StringBuilder input, Pattern pattern, String prefix) {
+        Matcher m = pattern.matcher(input);
         while (m.find()) {
             if (isEscapedChar(input.toString(), m.start())) {
                 continue;
@@ -387,7 +418,7 @@ public class NamedPattern {
             // since we're replacing the original string being matched,
             // we have to reset the matcher so that it searches the new
             // string
-            input.replace(m.start(), m.end(), "\\" + index);
+            input.replace(m.start(), m.end(), prefix + index);
             m.reset(input);
         }
         return input;
@@ -405,7 +436,7 @@ public class NamedPattern {
         // make sure we're actually looking at the construct (ignore escapes)
         StringBuilder s = new StringBuilder(namedPattern);
         s = replace(s, NAMED_GROUP_PATTERN, "(");
-        s = replaceBackrefGroupNameWithIndex(s);
+        s = replaceGroupNameWithIndex(s, BACKREF_NAMED_GROUP_PATTERN, "\\");
         return Pattern.compile(s.toString(), flags);
     }
 

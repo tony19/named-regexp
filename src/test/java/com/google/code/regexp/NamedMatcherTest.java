@@ -17,6 +17,7 @@ package com.google.code.regexp;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -417,6 +418,23 @@ public class NamedMatcherTest {
     }
 
     @Test
+    public void testAppendReplacementWithNamedRefs() {
+        StringBuffer sb = new StringBuffer("origText ");
+        M1.find();
+        M1.appendReplacement(sb, "${named}foo ${named}bar");
+        assertEquals("origText Lorem foofoo foobar", sb.toString());
+    }
+
+    @Test
+    public void testAppendReplacementWithInvalidNamedRefs() {
+        thrown.expect(PatternSyntaxException.class);
+        thrown.expectMessage("unknown group name near index 2\n" +
+                             "${nonexistentName} foobar!\n" +
+                             "  ^");
+        M1.appendReplacement(new StringBuffer(), "${nonexistentName} foobar!");
+    }
+
+    @Test
     public void testAppendTailAppendsRemainderToBuffer() {
         StringBuffer sb = new StringBuffer("origText ");
         M1.find();
@@ -553,8 +571,36 @@ public class NamedMatcherTest {
     }
 
     @Test
+    public void testReplaceAllWithNamedRefs() {
+        assertEquals("Lorem foo@foo# ipsum foo@foo#", M1.replaceAll("${named}@${named}#"));
+    }
+
+    @Test
+    public void testReplaceAllWithInvalidNamedRefs() {
+        thrown.expect(PatternSyntaxException.class);
+        thrown.expectMessage("unknown group name near index 2\n" +
+                             "${nonexistentName} foobar!\n" +
+                             "  ^");
+        M1.replaceAll("${nonexistentName} foobar!");
+    }
+
+    @Test
     public void testReplaceFirst() {
         assertEquals("Lorem xyz ipsum abcfoo", M1.replaceFirst("xyz"));
+    }
+
+    @Test
+    public void testReplaceFirstWithNamedRefs() {
+        assertEquals("Lorem foo@foo# ipsum abcfoo", M1.replaceFirst("${named}@${named}#"));
+    }
+
+    @Test
+    public void testReplaceFirstWithInvalidNamedRefs() {
+        thrown.expect(PatternSyntaxException.class);
+        thrown.expectMessage("unknown group name near index 2\n" +
+                             "${nonexistentName} foobar!\n" +
+                             "  ^");
+        M1.replaceFirst("${nonexistentName} foobar!");
     }
 
     @Test

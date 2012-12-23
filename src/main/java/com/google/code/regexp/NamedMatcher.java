@@ -188,7 +188,7 @@ public class NamedMatcher implements NamedMatchResult {
      * @return The target string buffer
      */
     public NamedMatcher appendReplacement(StringBuffer sb, String replacement) {
-        matcher.appendReplacement(sb, replacement);
+        matcher.appendReplacement(sb, parentPattern.replaceProperties(replacement));
         return this;
     }
 
@@ -436,7 +436,8 @@ public class NamedMatcher implements NamedMatchResult {
      * the replacement string, substituting captured subsequences as needed
      */
     public String replaceAll(String replacement) {
-        return matcher.replaceAll(replacement);
+        String r = parentPattern.replaceProperties(replacement);
+        return matcher.replaceAll(r);
     }
 
     /**
@@ -448,7 +449,7 @@ public class NamedMatcher implements NamedMatchResult {
      * by the replacement string, substituting captured subsequences as needed
      */
     public String replaceFirst(String replacement) {
-        return matcher.replaceFirst(replacement);
+        return matcher.replaceFirst(parentPattern.replaceProperties(replacement));
     }
 
     /**
@@ -511,5 +512,4 @@ public class NamedMatcher implements NamedMatchResult {
     public String toString() {
         return matcher.toString();
     }
-
 }
