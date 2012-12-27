@@ -356,8 +356,8 @@ public class NamedPatternTest {
 
     @Test
     public void testEqualsWithSameFlagsButDiffPatternGetsFalse() {
-        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.CANON_EQ);
-        NamedPattern p2 = NamedPattern.compile("(?<named>x)", Pattern.CANON_EQ);
+        NamedPattern p1 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.DOTALL);
+        NamedPattern p2 = NamedPattern.compile("(?<named>x)", Pattern.DOTALL);
         assertFalse(p1.equals(p2));
     }
 
