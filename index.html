@@ -7,7 +7,11 @@
     <meta name="description" content="named-regexp : Named capture groups for Java 5/6 regular expressions" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/prettify.css">
 
+    <script type="text/javascript" src="javascripts/prettify.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/main.js"></script>
     <title>named-regexp</title>
   </head>
 
@@ -37,9 +41,11 @@
 
 <h3>snippet.</h3>
 
-<p>The construct for named groups is the same as in Java 7: <strong><code>(?&lt;name&gt;...)</code></strong>, as shown below.</p>
+<p>The constructs for named groups and references are the same as in Java 7.</p>
 
-<pre><code>NamedPattern p = NamedPattern.compile("abc(?&lt;foo&gt;\\d+)xyz");
+<h4>named groups</h4>
+To create a named capture group, use <strong><code>(?&lt;name>...)</code></strong>, as in:
+<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc<strong>(?&lt;foo&gt;\\d+)</strong>xyz");
 NamedMatcher m = p.matcher("abc123xyz");
 System.out.println(m.find());       // true
 System.out.println(m.group("foo")); // 123
@@ -62,7 +68,7 @@ NamedMatcher m = p.matcher("abc123def");
 System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123
 </code></pre>
 
-<h3>download.</h3>
+<h3>download</h3>
 You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9</code></a>; or include it as a Maven dependency:
 <pre><code class="prettyprint">&lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>

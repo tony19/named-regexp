@@ -1,1 +1,5 @@
-console.log('This would be the main JS file.');
+// assumes Jquery is loaded at this point
+
+$(function() {
+	prettyPrint();
+});
