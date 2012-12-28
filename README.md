@@ -67,7 +67,7 @@ License
 
 [1]: http://code.google.com/p/named-regexp
 [2]: https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX
-[3]: http://tony19.github.com/named-regexp
+[3]: http://tony19.github.com/named-regexp/index.html
 [4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar
 [5]: https://oss.sonatype.org/content/repositories/snapshots/
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6153b1e63711b00863135b84138816f9 "githalytics.com")](http://githalytics.com/tony19/named-regexp)
