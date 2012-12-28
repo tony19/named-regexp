@@ -27,14 +27,14 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
 /**
- * Tests {@link NamedMatcher}
+ * Tests {@link Matcher}
  */
-public class NamedMatcherTest {
+public class MatcherTest {
     static final String INPUT = "Lorem abcfoo ipsum abcfoo";
     static final String PATT = "(a)(b)(?:c)(?<named>foo)";
-    static final NamedPattern P = NamedPattern.compile(PATT);
-    NamedMatcher M1;
-    NamedMatcher M2;
+    static final Pattern P = Pattern.compile(PATT);
+    Matcher M1;
+    Matcher M2;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -57,38 +57,38 @@ public class NamedMatcherTest {
 
     @Test
     public void testStartPositionWithGroupName() {
-        NamedMatcher m = P.matcher("abcfooxyz");
+        Matcher m = P.matcher("abcfooxyz");
         m.find();
         assertEquals(3, m.start("named"));
     }
 
     @Test
     public void testStartPositionWithGroupIndex() {
-        NamedMatcher m = P.matcher("abcfooxyz");
+        Matcher m = P.matcher("abcfooxyz");
         m.find();
         assertEquals(1, m.start(2)); // 2 = index of (b)
     }
 
     @Test
     public void testEndPositionWithGroupName() {
-        NamedMatcher m = P.matcher("abcfooxyz");
+        Matcher m = P.matcher("abcfooxyz");
         m.find();
         assertEquals(6, m.end("named"));
     }
 
     @Test
     public void testEndPositionWithGroupIndex() {
-        NamedMatcher m = P.matcher("abcfooxyz");
+        Matcher m = P.matcher("abcfooxyz");
         m.find();
         assertEquals(2, m.end(2)); // 2 = index of (b)
     }
 
     @Test
     public void testToMatchResult() {
-        NamedMatcher m = P.matcher("abcfoo");
+        Matcher m = P.matcher("abcfoo");
 
         m.find();
-        NamedMatchResult r = m.toMatchResult();
+        MatchResult r = m.toMatchResult();
         assertNotNull(r);
 
         assertEquals("foo", r.group("named"));
@@ -101,7 +101,7 @@ public class NamedMatcherTest {
 
     @Test
     public void testUsePatternSetsUnderlyingPattern() {
-        NamedMatcher m = P.matcher("xyzabcfooabcfoo");
+        Matcher m = P.matcher("xyzabcfooabcfoo");
         m.find();
         assertEquals(3, m.start());
         m.find();
@@ -114,7 +114,7 @@ public class NamedMatcherTest {
         // at the beginning of the string; make sure it
         // doesn't match the previous pattern (which is
         // in the middle of the string)
-        m.usePattern(NamedPattern.compile("xy(?<named>z)"));
+        m.usePattern(Pattern.compile("xy(?<named>z)"));
         m.reset();
         m.find();
         assertEquals(0, m.start());
@@ -122,7 +122,7 @@ public class NamedMatcherTest {
 
     @Test( timeout = 5000 )
     public void testResetForcesFindFromBeginning() {
-        NamedMatcher m = P.matcher("abcfooabcfoo");
+        Matcher m = P.matcher("abcfooabcfoo");
 
         // advance find to last match; the test's timeout
         // protects from accidental infinite loop
@@ -136,7 +136,7 @@ public class NamedMatcherTest {
 
     @Test( timeout = 5000 )
     public void testResetCharSequence() {
-        NamedMatcher m = P.matcher("abcfooabcx");
+        Matcher m = P.matcher("abcfooabcx");
 
         // make sure at least one match is found and then advance
         // find to the end; the test's timeout protects from
@@ -155,7 +155,7 @@ public class NamedMatcherTest {
 
     @Test
     public void testNoMatchesForNamedGroup() {
-        NamedMatcher m = P.matcher("abcd");
+        Matcher m = P.matcher("abcd");
         assertFalse(m.find());
 
         // throws IllegalStateException("No match found")
@@ -166,7 +166,7 @@ public class NamedMatcherTest {
 
     @Test
     public void testNoMatchesForInvalidGroupName() {
-        NamedMatcher m = P.matcher("abcd");
+        Matcher m = P.matcher("abcd");
         assertFalse(m.find());
 
         // throws IllegalStateException("No match found")
@@ -177,56 +177,56 @@ public class NamedMatcherTest {
 
     @Test
     public void testNamedGroupAfterUnnamedAndNoncaptureGroups() {
-        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
-        NamedMatcher m = p.matcher("abcx");
+        Pattern p = Pattern.compile("(a)(b)(?:c)(?<named>x)");
+        Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testNamedGroupAfterUnnamedGroups() {
-        NamedPattern p = NamedPattern.compile("(?:c)(?<named>x)");
-        NamedMatcher m = p.matcher("abcx");
+        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testNamedGroupAfterNoncaptureGroups() {
-        NamedPattern p = NamedPattern.compile("(?:c)(?<named>x)");
-        NamedMatcher m = p.matcher("abcx");
+        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testNamedGroupOnly() {
-        NamedPattern p = NamedPattern.compile("(?<named>x)");
-        NamedMatcher m = p.matcher("abcx");
+        Pattern p = Pattern.compile("(?<named>x)");
+        Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testMatchNamedGroupAfterAnotherNamedGroup() {
-        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<named>x)");
-        NamedMatcher m = p.matcher("abcx");
+        Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<named>x)");
+        Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testIndexOfNestedNamedGroup() {
-        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
-        NamedMatcher m = p.matcher("abcdx");
+        Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        Matcher m = p.matcher("abcdx");
         m.find();
         assertEquals("x", m.group("named"));
     }
 
     @Test
     public void testOrderedGroupsHasMatchesInOrder() {
-        NamedPattern p = NamedPattern.compile("(a)(b)(?:c)(?<named>foo)");
-        NamedMatcher m = p.matcher("abcfoo");
+        Pattern p = Pattern.compile("(a)(b)(?:c)(?<named>foo)");
+        Matcher m = p.matcher("abcfoo");
         m.find();
         List<String> matches = m.orderedGroups();
         assertEquals(3, matches.size());
@@ -243,8 +243,8 @@ public class NamedMatcherTest {
         // groups were throwing off the function, causing it to
         // fetch a named group at a non-existent index.
         // See Issue #1
-        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
-        NamedMatcher m = p.matcher("abcdx");
+        Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        Matcher m = p.matcher("abcdx");
         try {
             m.namedGroups();
             // verified here: IndexOutOfBoundsException did not occur
@@ -255,8 +255,8 @@ public class NamedMatcherTest {
 
     @Test
     public void testNamedGroupsGetsOnlyNamedGroups() {
-        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
-        NamedMatcher m = p.matcher("abcdxyz");
+        Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        Matcher m = p.matcher("abcdxyz");
 
         Map<String, String> map = m.namedGroups();
         assertEquals(3, map.size());
@@ -267,8 +267,8 @@ public class NamedMatcherTest {
 
     @Test
     public void testNamedGroupsWithNoMatchGetsEmptyMap() {
-        NamedPattern p = NamedPattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
-        NamedMatcher m = p.matcher("nada");
+        Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
+        Matcher m = p.matcher("nada");
 
         Map<String, String> map = m.namedGroups();
         assertEquals(0, map.size());
@@ -277,7 +277,7 @@ public class NamedMatcherTest {
     @Test
     public void testStandardPatternGetsOrigWithoutNamed() {
         final String PATT_W_NO_NAMED_GRPS = "(a)(b)(?:c)(foo)";
-        NamedMatcher m = P.matcher("abcfoo");
+        Matcher m = P.matcher("abcfoo");
         assertEquals(PATT_W_NO_NAMED_GRPS, m.standardPattern().pattern());
     }
 
@@ -348,15 +348,15 @@ public class NamedMatcherTest {
 
     @Test
     public void testEqualsReturnsFalseForTwoMatchersWithDifferentValues() {
-        NamedMatcher m2 = P.matcher("foo bar");
+        Matcher m2 = P.matcher("foo bar");
         assertFalse(M1.equals(m2));
     }
 
     @Test
     public void testEqualsReturnsFalseForTwoMatcherWithDifferentParentPatterns() {
-        NamedPattern p2 = NamedPattern.compile("(a)(b)(?:c)(?<named>x)");
-        NamedMatcher m1 = P.matcher("Lorem abcx ipsum");
-        NamedMatcher m2 = p2.matcher("Lorem abcx ipsum");
+        Pattern p2 = Pattern.compile("(a)(b)(?:c)(?<named>x)");
+        Matcher m1 = P.matcher("Lorem abcx ipsum");
+        Matcher m2 = p2.matcher("Lorem abcx ipsum");
         assertFalse(m1.equals(m2));
     }
 
@@ -377,14 +377,14 @@ public class NamedMatcherTest {
 
     @Test
     public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentValues() {
-        NamedMatcher m2 = P.matcher("foo bar");
+        Matcher m2 = P.matcher("foo bar");
         assertFalse(M1.hashCode() == m2.hashCode());
     }
 
     @Test
     public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentParentPatterns() {
-        NamedPattern p2 = NamedPattern.compile("foo bar");
-        NamedMatcher m2 = p2.matcher("Lorem abcx ipsum");
+        Pattern p2 = Pattern.compile("foo bar");
+        Matcher m2 = p2.matcher("Lorem abcx ipsum");
         assertFalse(M1.hashCode() == m2.hashCode());
     }
 
@@ -474,7 +474,7 @@ public class NamedMatcherTest {
         int firstPos = INPUT.indexOf("abcfoo");
         int lastPos = INPUT.lastIndexOf("abcfoo");
 
-        NamedMatcher m = M1.region(firstPos + 1, INPUT.length());
+        Matcher m = M1.region(firstPos + 1, INPUT.length());
         assertTrue(m.find());
         assertTrue(firstPos != lastPos);
         assertEquals(lastPos, m.start());
@@ -522,7 +522,7 @@ public class NamedMatcherTest {
     @Test
     public void testUseTransparentBounds() {
         String text  = "Madagascar is best seen by car or bike.";
-        NamedMatcher m = NamedPattern.compile("\\b(?<target>car)\\b").matcher(text);
+        Matcher m = Pattern.compile("\\b(?<target>car)\\b").matcher(text);
 
         // Set starting bound to char 7 in "Madagascar" (which is "car")
         // and then try to find the "car" word toward the end. Without
@@ -549,7 +549,7 @@ public class NamedMatcherTest {
     @Test
     public void testUseAnchoringBounds() {
         String text  = "The fox jumped over the white picket fence.";
-        NamedMatcher m = NamedPattern.compile("^(?<target>fox jumped) over").matcher(text);
+        Matcher m = Pattern.compile("^(?<target>fox jumped) over").matcher(text);
 
         // setting the starting region to "fox" will make
         // the matcher think that it's found the target
@@ -611,15 +611,15 @@ public class NamedMatcherTest {
 
     @Test
     public void testBackrefMatches() {
-        NamedPattern p = NamedPattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
-        NamedMatcher m = p.matcher("xyz12345abc12345def");
+        Pattern p = Pattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
+        Matcher m = p.matcher("xyz12345abc12345def");
         assertTrue(m.find());
         assertEquals("12345", m.group("num"));
     }
 
     @Test
     public void testBackrefNoMatch() {
-        NamedPattern p = NamedPattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
+        Pattern p = Pattern.compile("(?<a>xyz)(?<num>\\d+)abc\\k<num>def");
         // this should not match because the 2nd number is not equal
         // to the first captured number
         assertFalse(p.matcher("xyz12345abc123456def").find());
