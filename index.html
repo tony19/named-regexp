@@ -18,12 +18,11 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/tony19/named-regexp">View on GitHub</a>
 
-          <h1 id="project_title">named-regexp</h1>
+          <h1 id="project_title">(?&lt;named>regexp+)</h1>
           <h2 id="project_tagline">Named capture groups for Java 5/6 regular expressions</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/tony19/named-regexp/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/tony19/named-regexp/tarball/master">Download this project as a tar.gz file</a>
+              <a class="jar_download_link" title="Download named-regexp-0.1.9.jar" href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar">Download named-regexp-0.1.9.jar</a>
             </section>
         </header>
     </div>
@@ -33,7 +32,8 @@
       <section id="main_content" class="inner">
         <h3>about!</h3>
 
-<p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> but with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
+<p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
+<p>The current version is <strong>0.1.9</strong>.</p>
 
 <h3>snippet.</h3>
 
@@ -41,25 +41,48 @@
 
 <pre><code>NamedPattern p = NamedPattern.compile("abc(?&lt;foo&gt;\\d+)xyz");
 NamedMatcher m = p.matcher("abc123xyz");
-if (m.find()) {
-    System.out.println("found '" + m.group("foo") + "'"); // prints "found: '123'"
-} else {
-    System.out.println("nothing found...sorry :[");
-}
+System.out.println(m.find());       // true
+System.out.println(m.group("foo")); // 123
+</code></pre>
+
+<h4>back references</h4>
+To back-reference a named group in a pattern, use <strong><code>\k&lt;name></code></strong>, as in:
+<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc(?&lt;foo>\\d+)def<strong>\\k&lt;foo></strong>");
+NamedMatcher m1 = p.matcher("abc123def123ghi");
+NamedMatcher m2 = p.matcher("abc123def456ghi");
+System.out.println(m1.find());       // true
+System.out.println(m1.group("foo")); // 123
+System.out.println(m2.find());       // false
+</code></pre>
+
+<h4>replacement references</h4>
+To reference a named group for string replacement, use <strong><code>${name}</code></strong>, as in:
+<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc(?&lt;foo>\\d+)def");
+NamedMatcher m = p.matcher("abc123def");
+System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123
+</code></pre>
+
+<h3>download.</h3>
+You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9</code></a>; or include it as a Maven dependency:
+<pre><code class="prettyprint">&lt;dependency>
+  &lt;groupId>com.github.tony19&lt;/groupId>
+  &lt;artifactId>named-regexp&lt;/artifactId>
+  &lt;version>0.1.9&lt;/version>
+&lt;/dependency>
 </code></pre>
 
 <h3>help?</h3>
 
-<p>Post a question on <a href="http://stackoverflow.com"><strong>StackOverflow</strong></a> and tag it with <strong>named-regexp</strong>.</p>
-<p>Also see <a href="http://tony19.github.com/named-regexp/doc/0.1.8/index.html">javadocs</a></p>
+<p>Post a question on <a href="http://stackoverflow.com">StackOverflow</a>, and tag it with <strong>named-regexp</strong>.</p>
+<p>Report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.</p>
+<p>Also see <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.</p>
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">named-regexp maintained by <a href="https://github.com/tony19">tony19</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p class="copyright">named-regexp maintained by <code><a href="https://github.com/tony19">tony19</a></code></p>
       </footer>
     </div>
 
