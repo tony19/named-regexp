@@ -45,17 +45,17 @@
 
 <h4>named groups</h4>
 To create a named capture group, use <strong><code>(?&lt;name>...)</code></strong>, as in:
-<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc<strong>(?&lt;foo&gt;\\d+)</strong>xyz");
-NamedMatcher m = p.matcher("abc123xyz");
+<pre><code class="prettyprint">Pattern p = Pattern.compile("abc<strong>(?&lt;foo&gt;\\d+)</strong>xyz");
+Matcher m = p.matcher("abc123xyz");
 System.out.println(m.find());       // true
 System.out.println(m.group("foo")); // 123
 </code></pre>
 
 <h4>back references</h4>
 To back-reference a named group in a pattern, use <strong><code>\k&lt;name></code></strong>, as in:
-<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc(?&lt;foo>\\d+)def<strong>\\k&lt;foo></strong>");
-NamedMatcher m1 = p.matcher("abc123def123ghi");
-NamedMatcher m2 = p.matcher("abc123def456ghi");
+<pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def<strong>\\k&lt;foo></strong>");
+Matcher m1 = p.matcher("abc123def123ghi");
+Matcher m2 = p.matcher("abc123def456ghi");
 System.out.println(m1.find());       // true
 System.out.println(m1.group("foo")); // 123
 System.out.println(m2.find());       // false
@@ -63,13 +63,13 @@ System.out.println(m2.find());       // false
 
 <h4>replacement references</h4>
 To reference a named group for string replacement, use <strong><code>${name}</code></strong>, as in:
-<pre><code class="prettyprint">NamedPattern p = NamedPattern.compile("abc(?&lt;foo>\\d+)def");
-NamedMatcher m = p.matcher("abc123def");
+<pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def");
+Matcher m = p.matcher("abc123def");
 System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123
 </code></pre>
 
 <h3>download</h3>
-You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9</code></a>; or include it as a Maven dependency:
+You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9.jar</code></a> and add it to your classpath; or include it as a Maven dependency:
 <pre><code class="prettyprint">&lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
@@ -79,9 +79,11 @@ You can download <a href="https://oss.sonatype.org/content/repositories/releases
 
 <h3>help?</h3>
 
-<p>Post a question on <a href="http://stackoverflow.com">StackOverflow</a>, and tag it with <strong>named-regexp</strong>.</p>
-<p>Report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.</p>
-<p>Also see <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.</p>
+<p>Feel free to email <a href="https://groups.google.com/forum/?fromgroups#!forum/named-regexp">named-regexp@googlegroups.com</a>.<br/>
+Please report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.<br/>
+Also check out the <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.<br/>
+</p>
+
       </section>
     </div>
 
