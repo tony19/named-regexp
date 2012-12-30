@@ -109,7 +109,7 @@ footer p {
   color: #f2f2f2;
 }
 
-a {
+a, #release-notes h3 {
   text-decoration: none;
   color: #007edf;
   text-shadow: none;
@@ -126,7 +126,12 @@ a {
   -ms-transition: text-shadow 0.5s ease;
 }
 
-#main_content a:hover {
+#release-notes h3 {
+	font-weight: normal;
+	font-size: 16px;
+}
+
+#main_content a:hover, #release-notes h3:hover {
   color: #0069ba;
   text-shadow: #0090ff 0px 0px 2px;
 }
@@ -311,6 +316,10 @@ Full-Width Styles
   color: #fff;
   font-size: 42px;
   font-weight: 700;
+  text-shadow: #111 0px 0px 10px;
+}
+#project_title .light {
+	color: #43adff;
   text-shadow: #111 0px 0px 10px;
 }
 

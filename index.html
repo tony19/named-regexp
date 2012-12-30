@@ -10,7 +10,9 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/prettify.css">
 
     <script type="text/javascript" src="javascripts/prettify.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.animate-enhanced.min.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.easing.1.3.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
     <title>named-regexp</title>
   </head>
@@ -22,7 +24,7 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/tony19/named-regexp">View on GitHub</a>
 
-          <h1 id="project_title">(?&lt;named>regexp+)</h1>
+          <h1 id="project_title">(?&lt;<span class="light">named</span>><span class="light">regexp</span>+)</h1>
           <h2 id="project_tagline">Named capture groups for Java 5/6 regular expressions</h2>
 
             <section id="downloads">
@@ -34,56 +36,236 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>about!</h3>
+        <div>
+          <h2>about!</h2>
 
-<p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
-<p>The current version is <strong>0.1.9</strong>.</p>
+          <p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
+          <p>The current version is <strong>0.1.9</strong>.</p>
 
-<h3>snippet.</h3>
+          <h2>snippet.</h2>
 
-<p>The constructs for named groups and references are the same as in Java 7.</p>
+          <p>The constructs for named groups and references are the same as in Java 7.</p>
 
-<h4>named groups</h4>
-To create a named capture group, use <strong><code>(?&lt;name>...)</code></strong>, as in:
-<pre><code class="prettyprint">Pattern p = Pattern.compile("abc<strong>(?&lt;foo&gt;\\d+)</strong>xyz");
+          <h4>named groups</h4>
+          To create a named capture group, use <strong><code>(?&lt;name>...)</code></strong>, as in:
+          <pre><code class="prettyprint">Pattern p = Pattern.compile("abc<strong>(?&lt;foo&gt;\\d+)</strong>xyz");
 Matcher m = p.matcher("abc123xyz");
 System.out.println(m.find());       // true
-System.out.println(m.group("foo")); // 123
-</code></pre>
+System.out.println(m.group("foo")); // 123</code></pre>
 
-<h4>back references</h4>
-To back-reference a named group in a pattern, use <strong><code>\k&lt;name></code></strong>, as in:
-<pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def<strong>\\k&lt;foo></strong>");
+          <h4>back references</h4>
+          To back-reference a named group in a pattern, use <strong><code>\k&lt;name></code></strong>, as in:
+          <pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def<strong>\\k&lt;foo></strong>");
 Matcher m1 = p.matcher("abc123def123ghi");
 Matcher m2 = p.matcher("abc123def456ghi");
 System.out.println(m1.find());       // true
 System.out.println(m1.group("foo")); // 123
-System.out.println(m2.find());       // false
-</code></pre>
+System.out.println(m2.find());       // false</code></pre>
 
-<h4>replacement references</h4>
-To reference a named group for string replacement, use <strong><code>${name}</code></strong>, as in:
-<pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def");
+          <h4>replacement references</h4>
+          To reference a named group for string replacement, use <strong><code>${name}</code></strong>, as in:
+          <pre><code class="prettyprint">Pattern p = Pattern.compile("abc(?&lt;foo>\\d+)def");
 Matcher m = p.matcher("abc123def");
-System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123
-</code></pre>
+System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123</code></pre>
 
-<h3>download</h3>
-You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9.jar</code></a> and add it to your classpath; or include it as a Maven dependency:
-<pre><code class="prettyprint">&lt;dependency>
+          <h2>download$</h2>
+          You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9.jar</code></a> and add it to your classpath; or include it as a Maven dependency:
+          <pre><code class="prettyprint">&lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
   &lt;version>0.1.9&lt;/version>
-&lt;/dependency>
-</code></pre>
+&lt;/dependency></code></pre>
 
-<h3>help?</h3>
+          <h2>help?</h2>
 
-<p>Feel free to email <a href="https://groups.google.com/forum/?fromgroups#!forum/named-regexp">named-regexp@googlegroups.com</a>.<br/>
-Please report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.<br/>
-Also check out the <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.<br/>
-</p>
+          <p>Feel free to email <a href="https://groups.google.com/forum/?fromgroups#!forum/named-regexp">named-regexp@googlegroups.com</a>.<br/>
+          Please report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.<br/>
+          Also check out the <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.<br/>
+          </p>
+        </div>
 
+        <h2>notes;</h2>
+
+        <div id="release-notes">
+          <ul>
+            <li class="release"> <!-- 0.1.9 -->
+              <h3><span class="version">0.1.9</span> / <span class="date">DEC 28, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Renamed <code>NamedPattern</code> and <code>NamedMatcher</code> to <code>Pattern</code> and <code>Matcher</code>, respectively. The old classes have been deprecated and will be removed in a future release.</li>
+                  <li>Added support for named back-references and string replacements</li>
+                  <li>Now works on Android!</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Bug</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-8'>REGEX-8</a>] -         NamedMatcher.namedGroups() returns unnamed groups
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-9'>REGEX-9</a>] -         Android: NamedPattern.compile() gets stuck in infinite loop
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-10'>REGEX-10</a>] -         NamedMatcher.equals() does not compare all instance fields with another; hashCode() also wrong
+                  </li>
+                </ul>
+
+                <h4>Improvement</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-13'>REGEX-13</a>] -         Remove &quot;Named&quot; prefix from class names
+                  </li>
+                </ul>
+
+                <h4>New Feature</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-11'>REGEX-11</a>] -         Implement back references for named groups
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-12'>REGEX-12</a>] -         Implement named references in string replacement
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.8 -->
+              <h3><span class="version">0.1.8</span> / <span class="date">JUL 18, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Fixed invalid group value when pattern included literal slashes (i.e., <code>\\(notEscapedParen)(?&lt;foo>\d+)</code>)</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Bug</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-6'>REGEX-6</a>] -         Capture groups ignored if preceded by literal slash
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.7 -->
+              <h3><span class="version">0.1.7</span> / <span class="date">JUL 16, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Fixed invalid group value when pattern included look-behinds (i.e., <code>abc(?<=lookbehind)(?&lt;foo>\d+)</code>)</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Bug</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-14'>REGEX-14</a>] -         Invalid group value when pattern included lookarounds
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.6 -->
+              <h3><span class="version">0.1.6</span> / <span class="date">JUL 15, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>No code changes</li>
+                  <li>Uploaded project to Maven Central</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Task</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-4'>REGEX-4</a>] -         Upload to central maven repository
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.5 -->
+              <h3><span class="version">0.1.5</span> / <span class="date">JUL 15, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>No code changes</li>
+                </ul>
+              </div>
+              <div class="detail">
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.4 -->
+              <h3><span class="version">0.1.4</span> / <span class="date">JUL 15, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Fixed invalid group value when pattern included escaped parentheses (i.e., <code>\(notCaptureGroup)(?&lt;foo>\d+)</code>)</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>        Bug
+                </h4>
+                <ul>
+                <li>[<a href='https://tony19.atlassian.net/browse/REGEX-16'>REGEX-16</a>] -         Invalid group value when pattern contained escaped parentheses
+                </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.3 -->
+              <h3><span class="version">0.1.3</span> / <span class="date">JUL 15, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Fixed invalid group value when pattern included special constructs (i.e., <code>(?idsumx)(?&lt;foo>\d+)</code>)</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Bug</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-15'>REGEX-15</a>] -         Invalid group value when pattern includes special constructs
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.2 -->
+              <h3><span class="version">0.1.2</span> / <span class="date">JUL 14, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Fixed invalid group value when pattern contained unnamed groups (i.e., <code>(\s+unnamed)(?&lt;foo>\d+)</code>)</li>
+                  <li>Fixed bug that hid regex flags from underlying <code>Pattern</code> class</li>
+                  <li>Fixed <code>IndexOutOfBoundsException</code> when getting a map of named groups in the pattern</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Bug</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-1'>REGEX-1</a>] -         Pattern Flags are ignored
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-2'>REGEX-2</a>] -         Unnamed capture groups are broken
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-3'>REGEX-3</a>] -         nested group
+                  </li>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-7'>REGEX-7</a>] -         NamedMatcher.namedGroups() causes IndexOutOfBoundsException
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.1 -->
+              <h3><span class="version">0.1.1</span> / <span class="date">JUL 14, 2012</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Initial commit (forked from <a href="http://code.google.com/p/named-regexp">Google code</a>)</li>
+                </ul>
+              </div>
+            </li>
+
+          </ul>
+        </div>
       </section>
     </div>
 
