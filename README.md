@@ -1,4 +1,4 @@
-named-regexp 0.1.9 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp-SNAPSHOT/)
+named-regexp 0.1.9 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/)
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6 (and it works on Android).
 
