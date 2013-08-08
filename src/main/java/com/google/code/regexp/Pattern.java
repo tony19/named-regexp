@@ -31,14 +31,17 @@ import java.util.regex.PatternSyntaxException;
  */
 public class Pattern {
 
+    /** Pattern to match group names */
+    private static final String NAME_PATTERN = "[^!=].*?";
+
     /** Pattern to match named capture groups in a pattern string */
-    private static final java.util.regex.Pattern NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\(\\?<(\\w+)>");
+    private static final java.util.regex.Pattern NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\(\\?<(" + NAME_PATTERN + ")>", java.util.regex.Pattern.DOTALL);
 
     /** Pattern to match back references for named capture groups */
-    private static final java.util.regex.Pattern BACKREF_NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\\\k<(\\w+)>");
+    private static final java.util.regex.Pattern BACKREF_NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\\\k<(" + NAME_PATTERN + ")>", java.util.regex.Pattern.DOTALL);
 
     /** Pattern to match properties for named capture groups in a replacement string */
-    private static final java.util.regex.Pattern PROPERTY_PATTERN = java.util.regex.Pattern.compile("\\$\\{(\\w+)\\}");
+    private static final java.util.regex.Pattern PROPERTY_PATTERN = java.util.regex.Pattern.compile("\\$\\{(" + NAME_PATTERN + ")\\}", java.util.regex.Pattern.DOTALL);
 
     /** index of group within patterns above where group name is captured */
     private static final int INDEX_GROUP_NAME = 1;

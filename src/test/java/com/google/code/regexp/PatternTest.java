@@ -45,6 +45,36 @@ public class PatternTest {
     }
 
     @Test
+    public void testIndexOfAcceptsClassName() {
+      Pattern p = Pattern.compile("(?<com.example.foo>x)");
+      assertEquals(0, p.indexOf("com.example.foo"));
+    }
+
+    @Test
+    public void testIndexOfAcceptsNameWithSpacesAndPunctuation() {
+      Pattern p = Pattern.compile("(?<  Lorem ipsum dolor sit amet, consectetur adipisicing elit>x)");
+      assertEquals(0, p.indexOf("  Lorem ipsum dolor sit amet, consectetur adipisicing elit"));
+    }
+
+    @Test
+    public void testIndexOfAcceptsNameWithClosingAngleBracket() {
+      Pattern p = Pattern.compile("(?<foo bar > should not grab this bracket> x)");
+      assertEquals(0, p.indexOf("foo bar "));
+    }
+
+    @Test
+    public void testIndexOfAcceptsNameWithNewLines() {
+      Pattern p = Pattern.compile("(?<Lorem ipsum dolor sit amet,\n consectetur adipisicing elit>x)");
+      assertEquals(0, p.indexOf("Lorem ipsum dolor sit amet,\n consectetur adipisicing elit"));
+    }
+
+    @Test
+    public void testIndexOfNameWithUnicodeChars() {
+        Pattern p = Pattern.compile("(?<gefräßig>x)");
+        assertEquals(0, p.indexOf("gefräßig"));
+    }
+
+    @Test
     public void testIndexOfNamedGroup() {
         Pattern p = Pattern.compile("(?<named>x)");
         assertEquals(0, p.indexOf("named"));
@@ -393,5 +423,42 @@ public class PatternTest {
         // escaped backrefs are not translated
         Pattern p = Pattern.compile("(?<foo>xyz)(?<bar>\\d+)abc\\\\k<bar>");
         assertEquals("(xyz)(\\d+)abc\\\\k<bar>", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileBackrefAcceptsClassName() {
+        String GROUP_NAME = "com.example.foo";
+        Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
+        assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileBackrefAcceptsNameWithSpacesAndPunctuation() {
+        String GROUP_NAME = "  Lorem ipsum dolor sit amet, consectetur adipisicing elit";
+        Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
+        assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileBackrefTakesFirstClosingAngleBracket() {
+        String GROUP_NAME = "foo bar  >";
+        Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
+        // The first closing bracket encountered is used. The second becomes a literal,
+        // so we check for it in the standard pattern (two actually).
+        assertEquals("(xyz)(>\\d+)abc\\2>", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileBackrefAcceptsNameWithNewLines() {
+        String GROUP_NAME = "Lorem ipsum dolor sit amet,\n consectetur adipisicing elit";
+        Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
+        assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
+    }
+
+    @Test
+    public void testCompileBackrefAcceptsNameWithUnicodeChars() {
+        String GROUP_NAME = "gefräßig";
+        Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
+        assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
     }
 }
