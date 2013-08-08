@@ -54,7 +54,17 @@ public class Pattern {
      * Constructs a named pattern with the given regular expression and flags
      *
      * @param regex the expression to be compiled
-     * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
+     * @param flags Match flags, a bit mask that may include:
+     * <ul>
+     *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     * </ul>
      */
     protected Pattern(String regex, int flags) {
         namedPattern = regex;
@@ -80,7 +90,17 @@ public class Pattern {
      * Compiles the given regular expression into a pattern with the given flags
      *
      * @param regex the expression to be compiled
-     * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
+     * @param flags Match flags, a bit mask that may include:
+     * <ul>
+     *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     * </ul>
      * @return the pattern
      */
     public static Pattern compile(String regex, int flags) {
@@ -185,10 +205,11 @@ public class Pattern {
     }
 
     /**
-     * Replaces group-name properties (e.g., ${named}) in a replacement pattern with
-     * the equivalent reference that uses the corresponding group index (e.g., $2).
-     * If the string contains literal "$", it must be escaped with slash or else this
-     * call will attempt to parse it as a group-name property.
+     * Replaces group-name properties (e.g., <b><code>${named}</code></b>) in
+     * a replacement pattern with the equivalent reference that uses the
+     * corresponding group index (e.g., <b><code>$2</code></b>). If the string
+     * contains literal "$", it must be escaped with slash or else this call
+     * will attempt to parse it as a group-name property.
      *
      * This is meant to be used to transform the parameter for:
      *  <ul>
@@ -243,7 +264,8 @@ public class Pattern {
      * Splits the given input sequence around matches of this pattern.
      *
      * @param input The character sequence to be split
-     * @return The array of strings computed by splitting the input around matches of this pattern
+     * @return The array of strings computed by splitting the input around
+     * matches of this pattern
      */
     public String[] split(CharSequence input) {
         return pattern.split(input);
@@ -394,7 +416,8 @@ public class Pattern {
 
     /**
      * Replaces referenced group names with the reference to the corresponding group
-     * index (e.g., {@code \k<named>} to {@code \k2}; {@code ${named} to $2})).
+     * index (e.g., <b><code>\k&lt;named></code></b>} to <b><code>\k2</code></b>};
+     * <b><code>${named}</code></b> to <b><code>$2</code></b>}).
      * This assumes the group names have already been parsed from the pattern.
      *
      * @param input the string to evaluate
@@ -427,11 +450,22 @@ public class Pattern {
     }
 
     /**
-     * Constructs a named pattern with the given regular expression and flags
+     * Builds a {@code java.util.regex.Pattern} from a given regular expression
+     * pattern (which may contain named groups) and flags
      *
      * @param namedPattern the expression to be compiled
-     * @param flags Match flags, a bit mask that may include CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL and COMMENTS
-     * @return
+     * @param flags Match flags, a bit mask that may include:
+     * <ul>
+     *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     * </ul>
+     * @return the standard {@code java.util.regex.Pattern}
      */
     private java.util.regex.Pattern buildStandardPattern(String namedPattern, Integer flags) {
         // replace the named-group construct with left-paren but
