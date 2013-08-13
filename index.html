@@ -28,7 +28,7 @@
           <h2 id="project_tagline">Named capture groups for Java 5/6 regular expressions</h2>
 
             <section id="downloads">
-              <a class="jar_download_link" title="Download named-regexp-0.1.9.jar" href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar">Download named-regexp-0.1.9.jar</a>
+              <a class="jar_download_link" title="Download named-regexp-0.2.1.jar" href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.1/named-regexp-0.2.1.jar">Download named-regexp-0.2.1.jar</a>
             </section>
         </header>
     </div>
@@ -40,7 +40,7 @@
           <h2>about!</h2>
 
           <p><code>named-regexp</code> is a thin wrapper for good ol' <code>java.util.regex</code> with support for named capture groups in Java 5/6. (yes, Java 7 already does this...)</p>
-          <p>The current version is <strong>0.1.9</strong>.</p>
+          <p>The current version is <strong>0.2.1</strong>.</p>
 
           <h2>snippet.</h2>
 
@@ -69,18 +69,18 @@ Matcher m = p.matcher("abc123def");
 System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</strong>")); // 123456 123</code></pre>
 
           <h2>download$</h2>
-          You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.1.9/named-regexp-0.1.9.jar"><code>named-regexp-0.1.9.jar</code></a> and add it to your classpath; or include it as a Maven dependency:
+          You can download <a href="https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.1/named-regexp-0.2.1.jar"><code>named-regexp-0.2.1.jar</code></a> and add it to your classpath; or include it as a Maven dependency:
           <pre><code class="prettyprint">&lt;dependency>
   &lt;groupId>com.github.tony19&lt;/groupId>
   &lt;artifactId>named-regexp&lt;/artifactId>
-  &lt;version>0.1.9&lt;/version>
+  &lt;version>0.2.1&lt;/version>
 &lt;/dependency></code></pre>
 
           <h2>help?</h2>
 
           <p>Feel free to email <a href="https://groups.google.com/forum/?fromgroups#!forum/named-regexp">named-regexp@googlegroups.com</a>.<br/>
           Please report any bugs or feature requests in <a href="https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX%20">JIRA</a>.<br/>
-          Also check out the <a href="http://tony19.github.com/named-regexp/doc/0.1.9/index.html">javadocs</a>.<br/>
+          Also check out the <a href="http://tony19.github.com/named-regexp/doc/0.2.1/index.html">javadocs</a>.<br/>
           </p>
         </div>
 
@@ -88,6 +88,40 @@ System.out.println(m.replaceAll("<strong>${foo}</strong>456 <strong>${foo}</stro
 
         <div id="release-notes">
           <ul>
+            <li class="release"> <!-- 0.2.1 -->
+              <h3><span class="version">0.2.1</span> / <span class="date">AUG 12, 2013</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Removed deprecated classes (<code>NamedPattern</code>, <code>NamedMatcher</code>, <code>NamedMatchResult</code>). Use <code>Pattern</code>, <code>Matcher</code>, and <code>MatchResult</code> instead.</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Improvement</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-19'>REGEX-19</a>] -         Removed deprecated &quot;Named&quot; classes
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="release"> <!-- 0.1.10 -->
+              <h3><span class="version">0.1.10</span> / <span class="date">AUG 12, 2013</span></h3>
+              <div class="summary">
+                <ul>
+                  <li>Removed character restriction in group names so that they can now contain most free-form text (including Unicode characters or whitespace). However, the name must not begin with <b>!</b> (exclamation point) or <b>=</b> (equal symbol) since those characters would create a look-around construct.</li>
+                </ul>
+              </div>
+              <div class="detail">
+                <h4>Improvement</h4>
+                <ul>
+                  <li>
+                    [<a href='https://tony19.atlassian.net/browse/REGEX-18'>REGEX-18</a>] -         Remove character restriction in group names
+                  </li>
+                </ul>
+              </div>
+            </li>
+
             <li class="release"> <!-- 0.1.9 -->
               <h3><span class="version">0.1.9</span> / <span class="date">DEC 28, 2012</span></h3>
               <div class="summary">
