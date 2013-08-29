@@ -304,6 +304,43 @@ public class Pattern {
     }
 
     /**
+     * Determines if a string's character is within a regex character class
+     *
+     * @param s string to evaluate
+     * @param pos the position of the character to evaluate
+     * @return true if the character is inside a character class; otherwise false
+     */
+    static private boolean isInsideCharClass(String s, int pos) {
+
+        boolean openBracketFound = false;
+        boolean closeBracketFound = false;
+
+        // find last non-escaped open-bracket
+        String s2 = s.substring(0, pos);
+        int posOpen = pos;
+        while ((posOpen = s2.lastIndexOf('[', posOpen - 1)) != -1) {
+            if (!isEscapedChar(s2, posOpen)) {
+                openBracketFound = true;
+                break;
+            }
+        }
+
+        if (openBracketFound) {
+            // search remainder of string (after open-bracket) for a close-bracket
+            String s3 = s.substring(posOpen, pos);
+            int posClose = -1;
+            while ((posClose = s3.indexOf(']', posClose + 1)) != -1) {
+                if (!isEscapedChar(s3, posClose)) {
+                    closeBracketFound = true;
+                    break;
+                }
+            }
+        }
+
+        return openBracketFound && !closeBracketFound;
+    }
+
+    /**
      * Determines if the parenthesis at the specified position
      * of a string is for a non-capturing group, which is one of
      * the flag specifiers (e.g., (?s) or (?m) or (?:pattern).
@@ -317,6 +354,7 @@ public class Pattern {
      * @return true if the parenthesis is non-capturing; otherwise false
      */
     static private boolean isNoncapturingParen(String s, int pos) {
+
         //int len = s.length();
         boolean isLookbehind = false;
 
@@ -339,7 +377,8 @@ public class Pattern {
      * excluding escaped parentheses
      *
      * @param s string to evaluate
-     * @param pos ending position of string
+     * @param pos ending position of string; characters to the left
+     * of this position are evaluated
      * @return number of open parentheses
      */
     static private int countOpenParens(String s, int pos) {
@@ -349,6 +388,12 @@ public class Pattern {
         int numParens = 0;
 
         while (m.find()) {
+            // ignore parentheses inside character classes: [0-9()a-f]
+            // which are just literals
+            if (isInsideCharClass(s, m.start())) {
+                continue;
+            }
+
             // ignore escaped parens
             if (isEscapedChar(s, m.start())) continue;
 

@@ -46,26 +46,26 @@ public class PatternTest {
 
     @Test
     public void testIndexOfAcceptsClassName() {
-      Pattern p = Pattern.compile("(?<com.example.foo>x)");
-      assertEquals(0, p.indexOf("com.example.foo"));
+        Pattern p = Pattern.compile("(?<com.example.foo>x)");
+        assertEquals(0, p.indexOf("com.example.foo"));
     }
 
     @Test
     public void testIndexOfAcceptsNameWithSpacesAndPunctuation() {
-      Pattern p = Pattern.compile("(?<  Lorem ipsum dolor sit amet, consectetur adipisicing elit>x)");
-      assertEquals(0, p.indexOf("  Lorem ipsum dolor sit amet, consectetur adipisicing elit"));
+        Pattern p = Pattern.compile("(?<  Lorem ipsum dolor sit amet, consectetur adipisicing elit>x)");
+        assertEquals(0, p.indexOf("  Lorem ipsum dolor sit amet, consectetur adipisicing elit"));
     }
 
     @Test
     public void testIndexOfAcceptsNameWithClosingAngleBracket() {
-      Pattern p = Pattern.compile("(?<foo bar > should not grab this bracket> x)");
-      assertEquals(0, p.indexOf("foo bar "));
+        Pattern p = Pattern.compile("(?<foo bar > should not grab this bracket> x)");
+        assertEquals(0, p.indexOf("foo bar "));
     }
 
     @Test
     public void testIndexOfAcceptsNameWithNewLines() {
-      Pattern p = Pattern.compile("(?<Lorem ipsum dolor sit amet,\n consectetur adipisicing elit>x)");
-      assertEquals(0, p.indexOf("Lorem ipsum dolor sit amet,\n consectetur adipisicing elit"));
+        Pattern p = Pattern.compile("(?<Lorem ipsum dolor sit amet,\n consectetur adipisicing elit>x)");
+        assertEquals(0, p.indexOf("Lorem ipsum dolor sit amet,\n consectetur adipisicing elit"));
     }
 
     @Test
@@ -132,6 +132,66 @@ public class PatternTest {
     public void testIndexOfNamedGroupContainingSpecialConstruct() {
         Pattern p = Pattern.compile("\\d{2}/\\d{2}/\\d{4}: EXCEPTION - (?<exception>(?s)(.+(?:Exception|Error)[^\\n]+(?:\\s++at [^\\n]+)++)(?:\\s*\\.{3}[^\\n]++)?\\s*)\\n");
         assertEquals(0, p.indexOf("exception"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterNonEscapedParenInCharacterClass() {
+        Pattern p = Pattern.compile("(a)(?<foo>[()])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterEscapedParensInCharacterClass() {
+        Pattern p = Pattern.compile("(a)(?<foo>[\\(\\)])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterEscapedOpenParenInCharacterClass() {
+        Pattern p = Pattern.compile("(a)(?<foo>[\\()])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterEscapedCloseParenInCharacterClass() {
+        Pattern p = Pattern.compile("(a)(?<foo>[(\\)])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterSlashedParensInCharacterClass() {
+        // double-slashes in a character class are literal slashes, not escapes
+        Pattern p = Pattern.compile("(a)(?<foo>[\\\\(\\\\)])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterSlashedOpenParenInCharacterClass() {
+        // double-slashes in a character class are literal slashes, not escapes
+        Pattern p = Pattern.compile("(a)(?<foo>[\\\\()])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterSlashedCloseParenInCharacterClass() {
+        // double-slashes in a character class are literal slashes, not escapes
+        Pattern p = Pattern.compile("(a)(?<foo>[(\\\\)])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterNonEscapedParenInCharClassWithEscapedCloseBracket() {
+        Pattern p = Pattern.compile("(a)(?<foo>[\\]()])(?:c)(?<named>x)");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterNonEscapedParenAfterEscapedOpenBracket() {
+        // since the open-bracket is escaped, it doesn't create a character class,
+        // so the parentheses inside the "foo" group is a capturing group (that
+        // currently captures nothing but still valid regex and thus counted)
+        Pattern p = Pattern.compile("(a)(?<foo>\\[()])(?:c)(?<named>x)");
+        assertEquals(3, p.indexOf("named"));
     }
 
     @Test

@@ -200,6 +200,50 @@ public class MatcherTest {
     }
 
     @Test
+    public void testNamedGroupAfterParensInCharacterClass() {
+        Pattern p = Pattern.compile("(?:c)[(d-f0-9)]+(?<named>x)");
+        Matcher m = p.matcher("cdef5678x");
+        m.find();
+        assertEquals("x", m.group("named"));
+    }
+
+    @Test
+    public void testNamedGroupAfterEscapedOpenParenInCharacterClass() {
+        Pattern p = Pattern.compile("(?:c)[\\(d-f0-9)]+(?<named>x)");
+        Matcher m = p.matcher("cdef5678x");
+        m.find();
+        assertEquals("x", m.group("named"));
+    }
+
+    @Test
+    public void testNamedGroupAfterEscapedCloseParenInCharacterClass() {
+        Pattern p = Pattern.compile("(?:c)[(d-f0-9\\)]+(?<named>x)");
+        Matcher m = p.matcher("cdef5678x");
+        m.find();
+        assertEquals("x", m.group("named"));
+    }
+
+    @Test
+    public void testNamedGroupAfterEscapedOpenBracket() {
+        // since open-bracket is escaped, it doesn't create a character class
+        Pattern p = Pattern.compile("(?:c)\\[([d-f0-9]+)](?<named>x)");
+        Matcher m = p.matcher("c[def5678]x");
+        m.find();
+        assertEquals("x", m.group("named"));
+    }
+
+    @Test
+    public void testNamedGroupAfterCharClassThatHasEscapedCloseBracket() {
+        // parser should be able to tell that the escaped close-bracket
+        // is not closing the character class; and thus the following paren
+        // is inside the character class (making it a literal)
+        Pattern p = Pattern.compile("(?:c)[\\](d-f0-9)]+(?<named>x)");
+        Matcher m = p.matcher("cdef5678x");
+        m.find();
+        assertEquals("x", m.group("named"));
+    }
+
+    @Test
     public void testNamedGroupOnly() {
         Pattern p = Pattern.compile("(?<named>x)");
         Matcher m = p.matcher("abcx");
