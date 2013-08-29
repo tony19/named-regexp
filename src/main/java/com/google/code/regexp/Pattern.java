@@ -51,8 +51,6 @@ public class Pattern {
     private List<String> groupNames;
     private Map<String,List<GroupInfo> > groupInfo;
 
-    protected Pattern() {}
-
     /**
      * Constructs a named pattern with the given regular expression and flags
      *

@@ -31,8 +31,6 @@ public class Matcher implements MatchResult {
     private java.util.regex.Matcher matcher;
     private Pattern parentPattern;
 
-    protected Matcher() {}
-
     Matcher(Pattern parentPattern, java.util.regex.MatchResult matcher) {
         this.parentPattern = parentPattern;
         this.matcher = (java.util.regex.Matcher) matcher;
