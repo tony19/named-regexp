@@ -60,13 +60,13 @@ public class Pattern {
      * @param flags Match flags, a bit mask that may include:
      * <ul>
      *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
-     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     *   <li>{@link java.util.regex.Pattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.Pattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.Pattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.Pattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.Pattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.Pattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.Pattern#COMMENTS}</li>
      * </ul>
      */
     protected Pattern(String regex, int flags) {
@@ -96,13 +96,13 @@ public class Pattern {
      * @param flags Match flags, a bit mask that may include:
      * <ul>
      *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
-     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     *   <li>{@link java.util.regex.Pattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.Pattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.Pattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.Pattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.Pattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.Pattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.Pattern#COMMENTS}</li>
      * </ul>
      * @return the pattern
      */
@@ -460,13 +460,13 @@ public class Pattern {
      * @param flags Match flags, a bit mask that may include:
      * <ul>
      *   <li>{@link java.util.regex.Pattern#CASE_INSENSITIVE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#MULTILINE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#DOTALL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNICODE_CASE}</li>
-     *   <li>{@link java.util.regex.PatternPattern#CANON_EQ}</li>
-     *   <li>{@link java.util.regex.PatternPattern#UNIX_LINES}</li>
-     *   <li>{@link java.util.regex.PatternPattern#LITERAL}</li>
-     *   <li>{@link java.util.regex.PatternPattern#COMMENTS}</li>
+     *   <li>{@link java.util.regex.Pattern#MULTILINE}</li>
+     *   <li>{@link java.util.regex.Pattern#DOTALL}</li>
+     *   <li>{@link java.util.regex.Pattern#UNICODE_CASE}</li>
+     *   <li>{@link java.util.regex.Pattern#CANON_EQ}</li>
+     *   <li>{@link java.util.regex.Pattern#UNIX_LINES}</li>
+     *   <li>{@link java.util.regex.Pattern#LITERAL}</li>
+     *   <li>{@link java.util.regex.Pattern#COMMENTS}</li>
      * </ul>
      * @return the standard {@code java.util.regex.Pattern}
      */
