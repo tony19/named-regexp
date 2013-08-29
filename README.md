@@ -1,4 +1,4 @@
-named-regexp 0.2.1 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/)
+named-regexp 0.2.2 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/)
 ==================
 This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6 (and it works on Android).
 
@@ -28,7 +28,7 @@ See more [examples][3]
 
 Download
 --------
-Grab the latest release ([`named-regexp-0.2.1.jar`][4]) and include it in your classpath...
+Grab the latest release ([`named-regexp-0.2.2.jar`][4]) and include it in your classpath...
 
 *OR* Maven users can simply add this dependency:
 
@@ -36,7 +36,7 @@ Grab the latest release ([`named-regexp-0.2.1.jar`][4]) and include it in your c
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
@@ -68,6 +68,6 @@ License
 [1]: http://code.google.com/p/named-regexp
 [2]: https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX
 [3]: http://tony19.github.com/named-regexp/index.html
-[4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.1/named-regexp-0.2.1.jar
+[4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.2/named-regexp-0.2.2.jar
 [5]: https://oss.sonatype.org/content/repositories/snapshots/
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6153b1e63711b00863135b84138816f9 "githalytics.com")](http://githalytics.com/tony19/named-regexp)
