@@ -283,13 +283,25 @@ public class Pattern {
 
     /**
      * Determines if the character at the specified position
-     * of a string is escaped with a backslash
+     * of a string is escaped
      *
      * @param s string to evaluate
      * @param pos the position of the character to evaluate
      * @return true if the character is escaped; otherwise false
      */
     static private boolean isEscapedChar(String s, int pos) {
+        return isSlashEscapedChar(s, pos) || isQuoteEscapedChar(s, pos);
+    }
+
+    /**
+     * Determines if the character at the specified position
+     * of a string is escaped with a backslash
+     *
+     * @param s string to evaluate
+     * @param pos the position of the character to evaluate
+     * @return true if the character is escaped; otherwise false
+     */
+    static private boolean isSlashEscapedChar(String s, int pos) {
 
         // Count the backslashes preceding this position. If it's
         // even, there is no escape and the slashes are just literals.
@@ -301,6 +313,41 @@ public class Pattern {
             numSlashes++;
         }
         return numSlashes % 2 != 0;
+    }
+
+    /**
+     * Determines if the character at the specified position
+     * of a string is quote-escaped (between \\Q and \\E)
+     *
+     * @param s string to evaluate
+     * @param pos the position of the character to evaluate
+     * @return true if the character is quote-escaped; otherwise false
+     */
+    static private boolean isQuoteEscapedChar(String s, int pos) {
+
+        boolean openQuoteFound = false;
+        boolean closeQuoteFound = false;
+
+        // find last non-escaped open-quote
+        String s2 = s.substring(0, pos);
+        int posOpen = pos;
+        while ((posOpen = s2.lastIndexOf("\\Q", posOpen - 1)) != -1) {
+            if (!isSlashEscapedChar(s2, posOpen)) {
+                openQuoteFound = true;
+                break;
+            }
+        }
+
+        if (openQuoteFound) {
+            // search remainder of string (after open-quote) for a close-quote;
+            // no need to check that it's slash-escaped because it can't be
+            // (the escape character itself is part of the literal when quoted)
+            if (s2.indexOf("\\E", posOpen) != -1) {
+                closeQuoteFound = true;
+            }
+        }
+
+        return openQuoteFound && !closeQuoteFound;
     }
 
     /**

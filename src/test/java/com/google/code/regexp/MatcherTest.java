@@ -668,4 +668,51 @@ public class MatcherTest {
         // to the first captured number
         assertFalse(p.matcher("xyz12345abc123456def").find());
     }
+
+    @Test
+    public void testParenFoundAfterQuoteEscapedBracket() {
+        // Open-bracket is quote-escaped so it's not a character class;
+        // process it as a literal. Previously, we saw the bracket as a
+        // character class, which messed up the group indexes in the pattern
+        // as reported in Issue #2.
+        Pattern p = Pattern.compile("(?<T0>\\Q[\\E)(?<T1>\\d+)(?<T2>-)(?<T3>\\d+)(?<T4>\\])");
+        Matcher m = p.matcher("[1-0]");
+        assertTrue(m.find());
+        assertEquals("[", m.group("T0"));
+        assertEquals("1", m.group("T1"));
+        assertEquals("-", m.group("T2"));
+        assertEquals("0", m.group("T3"));
+        assertEquals("]", m.group("T4"));
+    }
+
+    @Test
+    public void testRealPatternFoundAfterQuoteEscapedPattern() {
+        // The quote-escaped string looks like a real regex pattern, but
+        // it's a literal string, so ignore it. The pattern after that
+        // should still be found
+        Pattern p = Pattern.compile("\\Q(?<foo>\\d+)  [  \\E(?<name>abc\\d+)  \\Q]\\E");
+        Matcher m = p.matcher("(?<foo>\\d+)  [  abc123  ]");
+        assertTrue(m.find());
+        assertEquals("abc123", m.group("name"));
+    }
+
+    @Test
+    public void testQuoteEscapedPatternDoesNotCreateNamedGroup() {
+        Pattern p = Pattern.compile("\\Q(?<foo>\\d+)\\E (?<name>abc\\d+)");
+        Matcher m = p.matcher("(?<foo>\\d+) abc123");
+        assertTrue(m.find());
+
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage("No group \"foo\"");
+        m.group("foo");
+    }
+
+    @Test
+    public void testNamedGroupFoundInEscapedQuote() {
+        // since quote-escape is itself escaped, it's actually a literal \Q and \E
+        Pattern p = Pattern.compile("(abc)\\\\Q(?<named>\\d+)\\\\E");
+        Matcher m = p.matcher("abc\\Q123\\E");
+        assertTrue(m.find());
+        assertEquals("123", m.group("named"));
+    }
 }

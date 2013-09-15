@@ -285,6 +285,43 @@ public class PatternTest {
     }
 
     @Test
+    public void testIndexOfNamedGroupAfterQuoteEscapedBracket() {
+        // open-bracket escaped, so it's not a character class
+        Pattern p = Pattern.compile("(a)(b)\\Q[\\E(?<named>c)\\]");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterSlashEscapedBracket() {
+        // open-bracket escaped, so it's not a character class
+        Pattern p = Pattern.compile("(a)(b)\\[(?<named>c)\\]");
+        assertEquals(2, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupAfterQuoteEscapedPattern() {
+        // The quote-escaped string looks like a real regex pattern, but
+        // it's a literal string, so ignore it. The pattern after that
+        // should still be found
+        Pattern p = Pattern.compile("(?<foo>a)\\Q(?<bar>b)(?<baz>c)(d)  [  \\E(?<named>e)  \\Q]\\E");
+        assertEquals(1, p.indexOf("named"));
+    }
+
+    @Test
+    public void testIndexOfNamedGroupInEscapedQuote() {
+        // since quote-escape is itself escaped, it's actually a literal \Q and \E
+        Pattern p = Pattern.compile("(a)\\\\Q(?<named>\\d+)\\\\E");
+        assertEquals(1, p.indexOf("named"));
+    }
+
+    @Test
+    public void testInvalidCloseQuoteEscapeSequence() {
+        // when \E present, \Q must also be present, so the following is invalid syntax
+        thrown.expect(PatternSyntaxException.class);
+        Pattern.compile("(a)\\\\Q(?<named>d)\\E");
+    }
+
+    @Test
     public void testNamedPatternGetsOriginalPattern() {
         final String ORIG_PATT = "(a)(b)(?:c)(?<named>x)";
         Pattern p = Pattern.compile(ORIG_PATT);
