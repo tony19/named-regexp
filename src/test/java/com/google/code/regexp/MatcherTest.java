@@ -166,12 +166,12 @@ public class MatcherTest {
 
     @Test
     public void testNoMatchesForInvalidGroupName() {
-        Matcher m = P.matcher("abcd");
-        assertFalse(m.find());
+        Matcher m = P.matcher("abcfoo");
+        assertTrue(m.find());
 
-        // throws IllegalStateException("No match found")
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("No match found");
+        // throws IndexOutOfBoundsException: No group "nonexistentName"
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage("No group \"nonexistentName\"");
         m.group("nonexistentName");
     }
 
