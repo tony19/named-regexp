@@ -1,6 +1,6 @@
 named-regexp 0.2.3 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/)
 ==================
-This library is a thin wrapper for `java.util.regex`, implementing named capture groups for Java 5/6 (and it works on Android).
+Written in 430 lines of code with [100% code coverage][7], this library adds support for [named capture groups][6] in Java 5/6 (and on Android).
 
 This is a fork of the [named-regexp][1] project from Google Code (currently inactive).
 
@@ -84,4 +84,6 @@ License
 [3]: http://tony19.github.com/named-regexp/index.html
 [4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.3/named-regexp-0.2.3.jar
 [5]: https://oss.sonatype.org/content/repositories/snapshots/
+[6]: http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
+[7]: https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-ANALYZE/cobertura
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6153b1e63711b00863135b84138816f9 "githalytics.com")](http://githalytics.com/tony19/named-regexp)
