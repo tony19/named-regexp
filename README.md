@@ -1,6 +1,6 @@
 named-regexp 0.2.3 [![Build Status](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/badge/icon)](https://tony19.ci.cloudbees.com/job/named-regexp/job/named-regexp-SNAPSHOT/)
 ==================
-Written in 430 lines of code with [100% test coverage][7], this library adds support for [named capture groups][6] in Java 5/6 (and on Android).
+Written in ~400 lines of code with [100% test coverage][7], this library adds support for [named capture groups][6] in Java 5/6 (and on Android).
 
 This is a fork of the [named-regexp][1] project from Google Code (currently inactive).
 
