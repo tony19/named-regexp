@@ -15,10 +15,13 @@
  */
 package com.google.code.regexp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -29,7 +32,20 @@ import java.util.regex.PatternSyntaxException;
  *
  * @since 0.1.9
  */
-public class Pattern {
+public class Pattern implements Serializable {
+
+    /**
+     * Determines if a de-serialized file is compatible with this class.
+     *
+     * Maintainers must change this value if and only if the new version
+     * of this class is not compatible with old versions. See Sun docs
+     * for <a href=http://java.sun.com/products/jdk/1.1/docs/guide
+     * /serialization/spec/version.doc.html> details. </a>
+     *
+     * Not necessary to include in first version of the class, but
+     * included here as a reminder of its importance.
+     */
+    private static final long serialVersionUID = 1L;
 
     /** Pattern to match group names */
     private static final String NAME_PATTERN = "[^!=].*?";
@@ -569,6 +585,41 @@ public class Pattern {
         return java.util.regex.Pattern.compile(s.toString(), flags);
     }
 
+    /**
+     * Compares the keys and values of two group-info maps
+     *
+     * @param a the first map to compare
+     * @param b the other map to compare
+     * @return {@code true} if the first map contains all of the other map's keys and values; {@code false} otherwise
+     */
+    private boolean groupInfoMatches(Map<String, List<GroupInfo>> a, Map<String, List<GroupInfo>> b) {
+        if (a == null && b == null) {
+            return true;
+        }
+
+        boolean isMatch = false;
+        if (a != null && b != null) {
+            if (a.isEmpty() && b.isEmpty()) {
+                isMatch = true;
+            } else if (a.size() == b.size()) {
+                for (Entry<String, List<GroupInfo>> entry : a.entrySet()) {
+                    List<GroupInfo> otherList = b.get(entry.getKey());
+                    isMatch = (otherList != null);
+                    if (!isMatch) {
+                        break;
+                    }
+
+                    List<GroupInfo> thisList = entry.getValue();
+                    isMatch = otherList.containsAll(thisList) && thisList.containsAll(otherList);
+                    if (!isMatch) {
+                        break;
+                    }
+                }
+            }
+        }
+        return isMatch;
+    }
+
     /*
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
@@ -585,7 +636,16 @@ public class Pattern {
             return false;
         }
         Pattern other = (Pattern)obj;
-        return namedPattern.equals(other.namedPattern) && pattern.flags() == other.pattern.flags();
+
+        boolean groupNamesMatch = (groupNames == null && other.groupNames == null) ||
+                                  (groupNames != null && !Collections.disjoint(groupNames, other.groupNames));
+        boolean groupInfoMatch = groupNamesMatch && groupInfoMatches(groupInfo, other.groupInfo);
+
+        return groupNamesMatch
+            && groupInfoMatch
+            && namedPattern.equals(other.namedPattern)
+            && pattern.flags() == other.pattern.flags()
+            ;
     }
 
     /*
@@ -594,7 +654,14 @@ public class Pattern {
      */
     @Override
     public int hashCode() {
-        return namedPattern.hashCode() ^ pattern.flags();
+        int hash = namedPattern.hashCode() ^ pattern.hashCode();
+        if (groupInfo != null) {
+            hash ^= groupInfo.hashCode();
+        }
+        if (groupNames != null) {
+            hash ^= groupNames.hashCode();
+        }
+        return hash;
     }
 
 }
