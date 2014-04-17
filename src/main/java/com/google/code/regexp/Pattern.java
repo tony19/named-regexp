@@ -208,7 +208,7 @@ public class Pattern implements Serializable {
         if (groupNames == null) {
             groupNames = new ArrayList<String>(groupInfo.keySet());
         }
-        return groupNames;
+        return Collections.unmodifiableList(groupNames);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Pattern implements Serializable {
      * @return a map of group names and their info
      */
     public Map<String, List<GroupInfo> > groupInfo() {
-        return groupInfo;
+        return Collections.unmodifiableMap(groupInfo);
     }
 
     /**
