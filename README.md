@@ -85,4 +85,3 @@ License
 [4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.3/named-regexp-0.2.3.jar
 [5]: https://oss.sonatype.org/content/repositories/snapshots/
 [6]: http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6153b1e63711b00863135b84138816f9 "githalytics.com")](http://githalytics.com/tony19/named-regexp)
