@@ -439,7 +439,7 @@ public class PatternTest {
     @Test
     public void testCompileRegexWithFlags() {
         final String PATT = "(?<name>abc) # comment 1";
-        int flags = java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.COMMENTS;
+        int flags = Pattern.CASE_INSENSITIVE | Pattern.COMMENTS;
         Pattern p = Pattern.compile(PATT, flags);
         assertEquals(PATT, p.namedPattern());
         assertEquals(flags, p.flags());
@@ -476,14 +476,14 @@ public class PatternTest {
     @Test
     public void testEqualsWithSamePatternButDiffFlagsGetsFalse() {
         Pattern p1 = Pattern.compile("(a)(b)(?:c)(?<named>x)");
-        Pattern p2 = Pattern.compile("(a)(b)(?:c)(?<named>x)", java.util.regex.Pattern.CASE_INSENSITIVE);
+        Pattern p2 = Pattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.CASE_INSENSITIVE);
         assertFalse(p1.equals(p2));
     }
 
     @Test
     public void testEqualsWithSameFlagsButDiffPatternGetsFalse() {
-        Pattern p1 = Pattern.compile("(a)(b)(?:c)(?<named>x)", java.util.regex.Pattern.DOTALL);
-        Pattern p2 = Pattern.compile("(?<named>x)", java.util.regex.Pattern.DOTALL);
+        Pattern p1 = Pattern.compile("(a)(b)(?:c)(?<named>x)", Pattern.DOTALL);
+        Pattern p2 = Pattern.compile("(?<named>x)", Pattern.DOTALL);
         assertFalse(p1.equals(p2));
     }
 
