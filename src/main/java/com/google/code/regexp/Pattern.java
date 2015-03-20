@@ -62,6 +62,30 @@ public class Pattern implements Serializable {
     /** index of group within patterns above where group name is captured */
     private static final int INDEX_GROUP_NAME = 1;
 
+    /** @see {@link java.util.regex.Pattern#UNIX_LINES} */
+    public static final int UNIX_LINES = java.util.regex.Pattern.UNIX_LINES;
+
+    /** @see {@link java.util.regex.Pattern#CASE_INSENSITIVE */
+    public static final int CASE_INSENSITIVE = java.util.regex.Pattern.CASE_INSENSITIVE;
+
+    /** @see {@link java.util.regex.Pattern#COMMENTS} */
+    public static final int COMMENTS = java.util.regex.Pattern.COMMENTS;
+
+    /** @see {@link java.util.regex.Pattern#MULTILINE} */
+    public static final int MULTILINE = java.util.regex.Pattern.MULTILINE;
+
+    /** @see {@link java.util.regex.Pattern#LITERAL} */
+    public static final int LITERAL = java.util.regex.Pattern.LITERAL;
+
+    /** @see {@link java.util.regex.Pattern#DOTALL} */
+    public static final int DOTALL = java.util.regex.Pattern.DOTALL;
+
+    /** @see {@link java.util.regex.Pattern#UNICODE_CASE} */
+    public static final int UNICODE_CASE = java.util.regex.Pattern.UNICODE_CASE;
+
+    /** @see @link {@link java.util.regex.Pattern#CANON_EQ} */
+    public static final int CANON_EQ = java.util.regex.Pattern.CANON_EQ;
+
     private java.util.regex.Pattern pattern;
     private String namedPattern;
     private List<String> groupNames;
