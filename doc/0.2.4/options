@@ -1,0 +1,22 @@
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/Users/tony/src/misc/named-regexp/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2016. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/tony/src/misc/named-regexp/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'named-regexp 0.2.4 API'
+-linkoffline
+'http://docs.oracle.com/javase/8/docs/api' '/Users/tony/src/misc/named-regexp/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'named-regexp 0.2.4 API'
