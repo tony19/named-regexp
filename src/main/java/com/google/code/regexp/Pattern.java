@@ -61,6 +61,48 @@ public class Pattern implements Serializable {
 
     /** index of group within patterns above where group name is captured */
     private static final int INDEX_GROUP_NAME = 1;
+    
+    /**
+     * @see {@link java.util.regex.Pattern#UNIX_LINES}
+     */
+    public static final int UNIX_LINES = 0x01;
+
+    /**
+     *@see {@link java.util.regex.Pattern#CASE_INSENSITIVE
+     */
+    public static final int CASE_INSENSITIVE = java.util.regex.Pattern.CASE_INSENSITIVE;
+
+    /**
+     * @see {@link java.util.regex.Pattern#COMMENTS}
+     */
+    public static final int COMMENTS = 0x04;
+
+    /**
+     * @see {@link java.util.regex.Pattern#MULTILINE}
+     */
+    public static final int MULTILINE = 0x08;
+
+    /**
+     * @see {@link java.util.regex.Pattern#LITERAL}
+     */
+    public static final int LITERAL = 0x10;
+
+    /**
+     * @see {@link java.util.regex.Pattern#DOTALL}
+     */
+    public static final int DOTALL = 0x20;
+
+    /**
+     * @see {@link java.util.regex.Pattern#UNICODE_CASE}
+     */
+    public static final int UNICODE_CASE = 0x40;
+
+    /**
+     * @see @link {@link java.util.regex.Pattern#CANON_EQ}
+     */
+    public static final int CANON_EQ = java.util.regex.Pattern.CANON_EQ;
+
+    
 
     /** @see {@link java.util.regex.Pattern#UNIX_LINES} */
     public static final int UNIX_LINES = java.util.regex.Pattern.UNIX_LINES;
