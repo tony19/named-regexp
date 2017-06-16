@@ -302,7 +302,10 @@ public class MatcherTest {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("abcdxyz");
 
-        Map<String, String> map = m.namedGroups();
+        List<Map<String, String>> list = m.namedGroups();
+        assertEquals(1, list.size());
+
+        Map<String, String> map = list.get(0);
         assertEquals(3, map.size());
         assertEquals("b", map.get("foo"));
         assertEquals("dx", map.get("bar"));
@@ -314,8 +317,8 @@ public class MatcherTest {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("nada");
 
-        Map<String, String> map = m.namedGroups();
-        assertEquals(0, map.size());
+        List<Map<String, String>> list = m.namedGroups();
+        assertEquals(0, list.size());
     }
 
     @Test
@@ -714,5 +717,31 @@ public class MatcherTest {
         Matcher m = p.matcher("abc\\Q123\\E");
         assertTrue(m.find());
         assertEquals("123", m.group("named"));
+    }
+
+    @Test
+    public void testNamedGroupsGetsAllMatchesInSingleGroup() {
+        Pattern pattern = Pattern.compile("(?<digit>\\d)(\\w)");
+        Matcher matcher = pattern.matcher("2foo3bar4");
+
+        final List<Map<String, String>> groups = matcher.namedGroups();
+        assertEquals(2, groups.size());
+        assertEquals("2", groups.get(0).get("digit"));
+        assertEquals("3", groups.get(1).get("digit"));
+    }
+
+    @Test
+    public void testNamedGroupsGetsAllMatchesInMultipleGroups() {
+        Pattern pattern = Pattern.compile("(?<dayOfYear>\\d+).(?<dayName>\\w+)");
+        Matcher matcher = pattern.matcher("1 Sunday foo bar 2 Monday foo bar 3 Tuesday foo bar 4 Wednesday foo bar 5 Thursday foo bar 6 Friday foo bar  7 Saturday foo bar 8 Sunday foo bar 9 Monday foo bar 10 Tuesday foo bar ");
+
+        final List<Map<String, String>> groups = matcher.namedGroups();
+        final String[] DAYS = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday"};
+        assertEquals(DAYS.length, groups.size());
+
+        for (int i = 0; i < DAYS.length; i++) {
+            assertEquals(i + 1 + "", groups.get(i).get("dayOfYear"));
+            assertEquals(DAYS[i], groups.get(i).get("dayName"));
+        }
     }
 }
