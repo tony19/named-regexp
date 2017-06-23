@@ -41,7 +41,7 @@ public interface MatchResult extends java.util.regex.MatchResult {
      *
      * @return the named capture groups
      */
-    public Map<String, String> namedGroups();
+    public List<Map<String, String>> namedGroups();
 
     /**
      * Returns the input subsequence captured by the given group during the

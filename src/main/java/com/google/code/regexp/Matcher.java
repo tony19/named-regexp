@@ -269,17 +269,28 @@ public class Matcher implements MatchResult {
      * matcher and attempts to match the input against the pre-specified
      * pattern.
      *
-     * @return a map of the group named and matched values
-     * (empty if no match found)
+     * @return a list of maps, each containing name-value matches
+     * (empty if no match found).
+     *
+     * Example:
+     *   pattern:  (?<dote>\d+).(?<day>\w+)
+     *   input:    1 Sun foo bar 2 Mon foo
+     *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
      */
-    public Map<String, String> namedGroups() {
-        Map<String, String> result = new LinkedHashMap<String, String>();
+    public List<Map<String, String>> namedGroups() {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
-        if (matcher.find(0)) {
+        int nextIndex = 0;
+        while (matcher.find(nextIndex)) {
+            Map<String, String> matches = new LinkedHashMap<String, String>();
+
             for (String groupName : parentPattern.groupNames()) {
                 String groupValue = matcher.group(groupIndex(groupName));
-                result.put(groupName, groupValue);
+                matches.put(groupName, groupValue);
+                nextIndex = matcher.end();
             }
+
+            result.add(matches);
         }
         return result;
     }
