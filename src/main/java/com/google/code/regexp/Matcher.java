@@ -269,8 +269,13 @@ public class Matcher implements MatchResult {
      * matcher and attempts to match the input against the pre-specified
      * pattern.
      *
-     * @return a map of the group named and matched values
-     * (empty if no match found)
+     * @return a list of maps, each containing name-value matches
+     * (empty if no match found).
+     *
+     * Example:
+     *   pattern:  (?<dote>\d+).(?<day>\w+)
+     *   input:    1 Sun foo bar 2 Mon foo
+     *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
      */
     public List<Map<String, String>> namedGroups() {
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
