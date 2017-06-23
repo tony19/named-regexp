@@ -36,7 +36,7 @@ Grab the latest release and include the JAR in your classpath...
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>0.2.4</version>
+  <version>0.2.5</version>
 </dependency>
 ```
 
@@ -82,6 +82,6 @@ License
 [1]: http://code.google.com/p/named-regexp
 [2]: https://tony19.atlassian.net/issues/?jql=project%20%3D%20REGEX
 [3]: http://tony19.github.com/named-regexp/index.html
-[4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.4/named-regexp-0.2.4.jar
+[4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.5/named-regexp-0.2.5.jar
 [5]: https://oss.sonatype.org/content/repositories/snapshots/
 [6]: http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
