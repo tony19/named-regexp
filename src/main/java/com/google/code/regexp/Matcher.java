@@ -136,7 +136,8 @@ public class Matcher implements MatchResult {
      * <p>If the match succeeds then more information can be obtained via the
      * start, end, and group methods.</p>
      *
-     * @return
+     * @return <tt>true</tt> if, and only if, a subsequence of the input
+     *         sequence matches this matcher's pattern
      */
     public boolean find() {
         return matcher.find();
@@ -273,7 +274,7 @@ public class Matcher implements MatchResult {
      * (empty if no match found).
      *
      * Example:
-     *   pattern:  (?<dote>\d+).(?<day>\w+)
+     *   pattern:  (?&lt;dote&gt;\d+).(?&lt;day&gt;\w+)
      *   input:    1 Sun foo bar 2 Mon foo
      *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
      */
@@ -364,7 +365,7 @@ public class Matcher implements MatchResult {
      * Returns the offset after the last character of the subsequence
      * captured by the given named group during the previous match operation.
      *
-     * @param group the name of the capture group
+     * @param groupName the name of the capture group
      * @return the offset
      */
     public int end(String groupName) {
