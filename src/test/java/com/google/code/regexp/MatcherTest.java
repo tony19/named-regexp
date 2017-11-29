@@ -744,4 +744,14 @@ public class MatcherTest {
             assertEquals(DAYS[i], groups.get(i).get("dayName"));
         }
     }
+
+    // Specify 1 second timeout to account for potential infinite loop (Issue #9)
+    @Test(timeout=1000)
+    public void testNamedGroupsReturnsEmptyListWhenNoGroupPresent() {
+        Pattern pattern = Pattern.compile("\\d+ no groups");
+        Matcher matcher = pattern.matcher("123 no groups");
+
+        final List<Map<String, String>> groups = matcher.namedGroups();
+        assertTrue(groups.isEmpty());
+    }
 }
