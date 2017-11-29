@@ -280,12 +280,17 @@ public class Matcher implements MatchResult {
      */
     public List<Map<String, String>> namedGroups() {
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        List<String> groupNames = parentPattern.groupNames();
+
+        if (groupNames.isEmpty()) {
+            return result;
+        }
 
         int nextIndex = 0;
         while (matcher.find(nextIndex)) {
             Map<String, String> matches = new LinkedHashMap<String, String>();
 
-            for (String groupName : parentPattern.groupNames()) {
+            for (String groupName : groupNames) {
                 String groupValue = matcher.group(groupIndex(groupName));
                 matches.put(groupName, groupValue);
                 nextIndex = matcher.end();
