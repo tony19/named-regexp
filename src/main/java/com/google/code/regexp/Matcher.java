@@ -129,10 +129,10 @@ public class Matcher implements MatchResult {
     }
 
     /**
-     * Returns the match state of this matcher as a NamedMatchResult. The result
+     * Returns the match state of this matcher as a MatchResult. The result
      * is unaffected by subsequent operations performed upon this matcher.
      *
-     * @return a NamedMatchResult with the state of this matcher
+     * @return a MatchResult with the state of this matcher
      */
     public MatchResult toMatchResult() {
         return new Matcher(this.parentPattern, matcher);
