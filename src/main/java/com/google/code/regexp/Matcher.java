@@ -31,9 +31,23 @@ public class Matcher implements MatchResult {
     private java.util.regex.Matcher matcher;
     private Pattern parentPattern;
 
+    Matcher(Pattern parentPattern, java.util.regex.Matcher matcher) {
+        this.parentPattern = parentPattern;
+        this.matcher = matcher;
+    }
+
+    /**
+     * @deprecated Use {@link #Matcher(Pattern parentPattern, java.util.regex.Matcher matcher)}
+     *
+     * JDK9 removes the ability to cast a MatchResult to a Matcher,
+     * resulting in a runtime error. There appears to be no feasible
+     * way to perform this conversion ourselves with only the given
+     * parameters, so this constructor is now deprecated in favor
+     * of the new constructor that passes in the original matcher.
+     */
     Matcher(Pattern parentPattern, java.util.regex.MatchResult matcher) {
         this.parentPattern = parentPattern;
-        this.matcher = (java.util.regex.Matcher) matcher;
+        this.matcher = (java.util.regex.Matcher) matcher; // runtime error here in JDK9
     }
 
     Matcher(Pattern parentPattern, CharSequence input) {
@@ -121,7 +135,7 @@ public class Matcher implements MatchResult {
      * @return a NamedMatchResult with the state of this matcher
      */
     public MatchResult toMatchResult() {
-        return new Matcher(this.parentPattern, matcher.toMatchResult());
+        return new Matcher(this.parentPattern, matcher);
     }
 
     /**
