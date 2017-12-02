@@ -158,16 +158,28 @@
       <build>
         <plugins>
 
-          <!-- Cobertura (code coverage tool) -->
+          <!-- Jacoco (code coverage tool) -->
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>cobertura-maven-plugin</artifactId>
-            <version>2.7</version>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.9</version>
             <executions>
               <execution>
-                <phase>package</phase>
+                <id>default-prepare-agent</id>
                 <goals>
-                  <goal>cobertura</goal>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-check</id>
+                <goals>
+                  <goal>check</goal>
                 </goals>
               </execution>
             </executions>
@@ -176,19 +188,14 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>3.0</version>
+            <version>3.6</version>
             <configuration>
               <reportPlugins>
-                <!-- Cobertura (code coverage tool) -->
+                <!-- Jacoco (code coverage tool) -->
                 <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>cobertura-maven-plugin</artifactId>
-                  <configuration>
-                    <formats>
-                      <format>html</format>
-                      <format>xml</format>
-                    </formats>
-                  </configuration>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>jacoco-maven-plugin</artifactId>
+                  <version>0.7.9</version>
                 </plugin>
 
                 <!-- JXR (source code reference generator) -->
