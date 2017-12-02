@@ -270,16 +270,14 @@ public class PatternTest {
     public void testIndexOfWithInvalidPositiveInstanceIndex() {
         Pattern p = Pattern.compile("(a)(?<named>x)(b)(?:c)(?<named>y)");
         thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage("Index: 10000000, Size: 2");
+        thrown.expectMessage("10000000");
         assertEquals(-1, p.indexOf("named", 10000000));
     }
 
     @Test
     public void testIndexOfWithInvalidNegativeInstanceIndex() {
         Pattern p = Pattern.compile("(a)(?<named>x)(b)(?:c)(?<named>y)");
-        // Negative index causes ArrayIndexOutOfBoundsException (which
-        // is a subclass of IndexOutOfBoundsException)
-        thrown.expect(ArrayIndexOutOfBoundsException.class);
+        thrown.expect(IndexOutOfBoundsException.class);
         thrown.expectMessage("-100");
         assertEquals(-1, p.indexOf("named", -100));
     }

@@ -46,7 +46,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -54,6 +54,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
   </properties>
 
   <build>
@@ -113,7 +115,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -156,16 +158,28 @@
       <build>
         <plugins>
 
-          <!-- Cobertura (code coverage tool) -->
+          <!-- Jacoco (code coverage tool) -->
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>cobertura-maven-plugin</artifactId>
-            <version>2.5.1</version>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.9</version>
             <executions>
               <execution>
-                <phase>package</phase>
+                <id>default-prepare-agent</id>
                 <goals>
-                  <goal>cobertura</goal>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-check</id>
+                <goals>
+                  <goal>check</goal>
                 </goals>
               </execution>
             </executions>
@@ -174,19 +188,14 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>3.0</version>
+            <version>3.6</version>
             <configuration>
               <reportPlugins>
-                <!-- Cobertura (code coverage tool) -->
+                <!-- Jacoco (code coverage tool) -->
                 <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>cobertura-maven-plugin</artifactId>
-                  <configuration>
-                    <formats>
-                      <format>html</format>
-                      <format>xml</format>
-                    </formats>
-                  </configuration>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>jacoco-maven-plugin</artifactId>
+                  <version>0.7.9</version>
                 </plugin>
 
                 <!-- JXR (source code reference generator) -->
@@ -200,7 +209,7 @@
                 <plugin>
                   <groupId>org.codehaus.mojo</groupId>
                   <artifactId>findbugs-maven-plugin</artifactId>
-                  <version>2.5.2</version>
+                  <version>3.0.5</version>
                   <configuration>
                     <threshold>Low</threshold>
                     <effort>Max</effort>
@@ -211,7 +220,7 @@
                 <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-pmd-plugin</artifactId>
-                  <version>2.7.1</version>
+                  <version>3.8</version>
                   <configuration>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
