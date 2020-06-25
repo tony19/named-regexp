@@ -1,6 +1,7 @@
 named-regexp [![GitHub release](https://img.shields.io/github/release/tony19/named-regexp.svg?maxAge=2592000)]() [![CircleCI](https://circleci.com/gh/tony19/named-regexp.svg?style=shield)](https://circleci.com/gh/tony19/named-regexp)
 
-==================
+---
+
 This lightweight library adds support for [named capture groups][6] in Java 5/6 (and on Android).
 
 This is a fork of the [named-regexp][1] project from Google Code (currently inactive).
