@@ -6,4 +6,7 @@ orbs:
 workflows:
   maven_test:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
+      - maven/test
+        matrix:
+          executor: ['8.0.242', '11.0.7', '12.0.2', '13.0.2', '14.0.1']
+          command: ['verify -Dgpg.skip']
