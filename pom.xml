@@ -88,7 +88,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -97,7 +97,7 @@
             </goals>
             <!-- https://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete -->
             <configuration>
-              <additionalparam>${javadoc.opts}</additionalparam>
+              <doclint>${javdoc.doclint}</doclint>
             </configuration>
           </execution>
         </executions>
@@ -254,7 +254,7 @@
         <jdk>[1.8,)</jdk>
       </activation>
       <properties>
-        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+        <javdoc.doclint>none</javdoc.doclint>
       </properties>
     </profile>
 
