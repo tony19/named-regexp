@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     parameters:
-      - jdk:
+      jdk:
         type: string
     working_directory: ~/named-regexp-ci
     docker:
