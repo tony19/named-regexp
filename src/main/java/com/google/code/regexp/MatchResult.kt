@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.regexp;
+package com.google.code.regexp
 
-import java.util.List;
-import java.util.Map;
+import java.util.regex.MatchResult
 
 /**
  * The result of a match operation.
  *
- * <p>This interface contains query methods used to determine the results of
+ *
+ * This interface contains query methods used to determine the results of
  * a match against a regular expression. The match boundaries, groups and
- * group boundaries can be seen but not modified through a MatchResult.</p>
+ * group boundaries can be seen but not modified through a MatchResult.
  *
  * @since 0.1.9
  */
-public interface MatchResult extends java.util.regex.MatchResult {
-
+interface MatchResult : MatchResult {
     /**
      * Returns the named capture groups in order
      *
      * @return the named capture groups
      */
-    public List<String> orderedGroups();
+    fun orderedGroups(): List<String>
 
     /**
      * Returns the named capture groups
      *
      * @return the named capture groups
      */
-    public List<Map<String, String>> namedGroups();
+    fun namedGroups(): List<Map<String?, String>>
 
     /**
      * Returns the input subsequence captured by the given group during the
@@ -50,7 +49,7 @@ public interface MatchResult extends java.util.regex.MatchResult {
      * @param groupName name of capture group
      * @return the subsequence
      */
-    public String group(String groupName);
+    fun group(groupName: String): String
 
     /**
      * Returns the start index of the subsequence captured by the given group
@@ -59,7 +58,7 @@ public interface MatchResult extends java.util.regex.MatchResult {
      * @param groupName name of capture group
      * @return the index
      */
-    public int start(String groupName);
+    fun start(groupName: String?): Int
 
     /**
      * Returns the offset after the last character of the subsequence captured
@@ -68,6 +67,5 @@ public interface MatchResult extends java.util.regex.MatchResult {
      * @param groupName name of capture group
      * @return the offset
      */
-    public int end(String groupName);
-
+    fun end(groupName: String?): Int
 }

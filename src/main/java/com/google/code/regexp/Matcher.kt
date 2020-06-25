@@ -13,46 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.regexp;
+package com.google.code.regexp
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*
 
 /**
  * An engine that performs match operations on a character sequence by
- * interpreting a {@link Pattern}. This is a wrapper for {@link java.util.regex.Matcher}.
+ * interpreting a [Pattern]. This is a wrapper for [java.util.regex.Matcher].
  *
  * @since 0.1.9
  */
-public class Matcher implements MatchResult {
+class Matcher : MatchResult {
+    private var matcher: java.util.regex.Matcher
+    private var parentPattern: Pattern
 
-    private java.util.regex.Matcher matcher;
-    private Pattern parentPattern;
-
-    Matcher(Pattern parentPattern, java.util.regex.Matcher matcher) {
-        this.parentPattern = parentPattern;
-        this.matcher = matcher;
+    internal constructor(parentPattern: Pattern, matcher: java.util.regex.Matcher) {
+        this.parentPattern = parentPattern
+        this.matcher = matcher
     }
 
-    /**
-     * @deprecated Use {@link #Matcher(Pattern parentPattern, java.util.regex.Matcher matcher)}
-     *
-     * JDK9 removes the ability to cast a MatchResult to a Matcher,
-     * resulting in a runtime error. There appears to be no feasible
-     * way to perform this conversion ourselves with only the given
-     * parameters, so this constructor is now deprecated in favor
-     * of the new constructor that passes in the original matcher.
-     */
-    Matcher(Pattern parentPattern, java.util.regex.MatchResult matcher) {
-        this.parentPattern = parentPattern;
-        this.matcher = (java.util.regex.Matcher) matcher; // runtime error here in JDK9
+    @Deprecated(
+        """Use {@link #Matcher(Pattern parentPattern, java.util.regex.Matcher matcher)}
+     
+      JDK9 removes the ability to cast a MatchResult to a Matcher,
+      resulting in a runtime error. There appears to be no feasible
+      way to perform this conversion ourselves with only the given
+      parameters, so this constructor is now deprecated in favor
+      of the new constructor that passes in the original matcher."""
+    )
+    internal constructor(parentPattern: Pattern, matcher: java.util.regex.MatchResult) {
+        this.parentPattern = parentPattern
+        this.matcher = matcher as java.util.regex.Matcher // runtime error here in JDK9
     }
 
-    Matcher(Pattern parentPattern, CharSequence input) {
-        this.parentPattern = parentPattern;
-        this.matcher = parentPattern.pattern().matcher(input);
+    internal constructor(parentPattern: Pattern, input: CharSequence?) {
+        this.parentPattern = parentPattern
+        matcher = parentPattern.pattern().matcher(input)
     }
 
     /**
@@ -60,18 +56,14 @@ public class Matcher implements MatchResult {
      *
      * @return the pattern
      */
-    public java.util.regex.Pattern standardPattern() {
-        return matcher.pattern();
-    }
+    fun standardPattern() = matcher.pattern()
 
     /**
      * Returns the named pattern that is interpreted by this matcher.
      *
      * @return the pattern
      */
-    public Pattern namedPattern() {
-        return parentPattern;
-    }
+    fun namedPattern() = parentPattern
 
     /**
      * Changes the Pattern that this Matcher uses to find matches with
@@ -79,13 +71,11 @@ public class Matcher implements MatchResult {
      * @param newPattern the new pattern
      * @return this Matcher
      */
-    public Matcher usePattern(Pattern newPattern) {
-        if (newPattern == null) {
-            throw new IllegalArgumentException("newPattern cannot be null");
-        }
-        this.parentPattern = newPattern;
-        matcher.usePattern(newPattern.pattern());
-        return this;
+    fun usePattern(newPattern: Pattern?): Matcher {
+        requireNotNull(newPattern) { "newPattern cannot be null" }
+        parentPattern = newPattern
+        matcher.usePattern(newPattern.pattern())
+        return this
     }
 
     /**
@@ -93,40 +83,40 @@ public class Matcher implements MatchResult {
      *
      * @return this Matcher
      */
-    public Matcher reset() {
-        matcher.reset();
-        return this;
+    fun reset(): Matcher {
+        matcher.reset()
+        return this
     }
 
     /**
      * Resets this matcher with a new input sequence
      *
-     * <p>Resetting a matcher discards all of its explicit state information
+     *
+     * Resetting a matcher discards all of its explicit state information
      * and sets its append position to zero. The matcher's region is set to
      * the default region, which is its entire character sequence. The
      * anchoring and transparency of this matcher's region boundaries are
-     * unaffected</p>
+     * unaffected
      *
      * @param input The new input character sequence
      * @return this Matcher
      */
-    public Matcher reset(CharSequence input) {
-        matcher.reset(input);
-        return this;
+    fun reset(input: CharSequence?): Matcher {
+        matcher.reset(input)
+        return this
     }
 
     /**
      * Attempts to match the entire region against the pattern.
      *
-     * <p>If the match succeeds then more information can be obtained via
-     * the start, end, and group methods.</p>
      *
-     * @return <code>true</code> if, and only if, the entire region sequence
+     * If the match succeeds then more information can be obtained via
+     * the start, end, and group methods.
+     *
+     * @return `true` if, and only if, the entire region sequence
      * matches this matcher's pattern
      */
-    public boolean matches() {
-        return matcher.matches();
-    }
+    fun matches() = matcher.matches()
 
     /**
      * Returns the match state of this matcher as a MatchResult. The result
@@ -134,65 +124,62 @@ public class Matcher implements MatchResult {
      *
      * @return a MatchResult with the state of this matcher
      */
-    public MatchResult toMatchResult() {
-        return new Matcher(this.parentPattern, matcher);
-    }
+    fun toMatchResult() = Matcher(parentPattern, matcher)
 
     /**
      * Attempts to find the next subsequence of the input sequence that matches
      * the pattern.
      *
-     * <p>This method starts at the beginning of this matcher's region, or,
+     *
+     * This method starts at the beginning of this matcher's region, or,
      * if a previous invocation of the method was successful and the matcher
      * has not since been reset, at the first character not matched by the
-     * previous match.</p>
+     * previous match.
      *
-     * <p>If the match succeeds then more information can be obtained via the
-     * start, end, and group methods.</p>
+     *
+     * If the match succeeds then more information can be obtained via the
+     * start, end, and group methods.
      *
      * @return <tt>true</tt> if, and only if, a subsequence of the input
-     *         sequence matches this matcher's pattern
+     * sequence matches this matcher's pattern
      */
-    public boolean find() {
-        return matcher.find();
-    }
+    fun find() = matcher.find()
 
     /**
      * Resets this matcher and then attempts to find the next subsequence of
      * the input sequence that matches the pattern, starting at the specified
      * index.
      *
-     * <p>If the match succeeds then more information can be obtained via the
+     *
+     * If the match succeeds then more information can be obtained via the
      * start, end, and group methods, and subsequent invocations of the find()
-     * method will start at the first character not matched by this match.</p>
-
+     * method will start at the first character not matched by this match.
+     *
      * @param start the starting index
-     * @return <code>true</code> if, and only if, a subsequence of the input
+     * @return `true` if, and only if, a subsequence of the input
      * sequence starting at the given index matches this matcher's pattern
      * @throws IndexOutOfBoundsException If start is less than zero or if start
      * is greater than the length of the input sequence.
      */
-    public boolean find(int start) {
-        return matcher.find(start);
-    }
+    fun find(start: Int) = matcher.find(start)
 
     /**
      * Attempts to match the input sequence, starting at the beginning of the
      * region, against the pattern.
      *
-     * <p>Like the matches method, this method always starts at the beginning
+     *
+     * Like the matches method, this method always starts at the beginning
      * of the region; unlike that method, it does not require that the entire
-     * region be matched.</p>
+     * region be matched.
      *
-     * <p>If the match succeeds then more information can be obtained via the
-     * start, end, and group methods.</p>
      *
-     * @return <code>true</code> if, and only if, a prefix of the input sequence
+     * If the match succeeds then more information can be obtained via the
+     * start, end, and group methods.
+     *
+     * @return `true` if, and only if, a prefix of the input sequence
      * matches this matcher's pattern
      */
-    public boolean lookingAt() {
-        return matcher.lookingAt();
-    }
+    fun lookingAt() = matcher.lookingAt()
 
     /**
      * Implements a non-terminal append-and-replace step.
@@ -201,9 +188,9 @@ public class Matcher implements MatchResult {
      * @param replacement The replacement string
      * @return The target string buffer
      */
-    public Matcher appendReplacement(StringBuffer sb, String replacement) {
-        matcher.appendReplacement(sb, parentPattern.replaceProperties(replacement));
-        return this;
+    fun appendReplacement(sb: StringBuffer?, replacement: String?): Matcher {
+        matcher.appendReplacement(sb, parentPattern.replaceProperties(replacement))
+        return this
     }
 
     /**
@@ -212,9 +199,7 @@ public class Matcher implements MatchResult {
      * @param sb The target string buffer
      * @return The target string buffer
      */
-    public StringBuffer appendTail(StringBuffer sb) {
-        return matcher.appendTail(sb);
-    }
+    fun appendTail(sb: StringBuffer?) = matcher.appendTail(sb)
 
     /**
      * Returns the input subsequence matched by the previous match.
@@ -222,9 +207,7 @@ public class Matcher implements MatchResult {
      * @return The (possibly empty) subsequence matched by the previous match,
      * in string form
      */
-    public String group() {
-        return matcher.group();
-    }
+    override fun group() = matcher.group()
 
     /**
      * Returns the input subsequence captured by the given group during the
@@ -235,18 +218,14 @@ public class Matcher implements MatchResult {
      * @throws IllegalStateException If no match has yet been attempted, or
      * if the previous match operation failed
      */
-    public String group(int group) {
-        return matcher.group(group);
-    }
+    override fun group(group: Int) = matcher.group(group)
 
     /**
      * Returns the number of capturing groups in this matcher's pattern.
      *
      * @return The number of capturing groups in this matcher's pattern
      */
-    public int groupCount() {
-        return matcher.groupCount();
-    }
+    override fun groupCount() = matcher.groupCount()
 
     /**
      * Gets a list of the matches in the order in which they occur
@@ -254,13 +233,13 @@ public class Matcher implements MatchResult {
      *
      * @return the matches
      */
-    public List<String> orderedGroups() {
-        int groupCount = groupCount();
-        List<String> groups = new ArrayList<String>(groupCount);
-        for (int i = 1; i <= groupCount; i++) {
-            groups.add(group(i));
+    override fun orderedGroups(): List<String> {
+        val groupCount = groupCount()
+        val groups: MutableList<String> = ArrayList(groupCount)
+        for (i in 1..groupCount) {
+            groups.add(group(i))
         }
-        return groups;
+        return groups
     }
 
     /**
@@ -271,12 +250,12 @@ public class Matcher implements MatchResult {
      * @return the subsequence
      * @throws IndexOutOfBoundsException if group name not found
      */
-    public String group(String groupName) {
-        int idx = groupIndex(groupName);
+    override fun group(groupName: String): String {
+        val idx = groupIndex(groupName)
         if (idx < 0) {
-          throw new IndexOutOfBoundsException("No group \"" + groupName + "\"");
+            throw IndexOutOfBoundsException("No group \"$groupName\"")
         }
-        return group(idx);
+        return group(idx)
     }
 
     /**
@@ -288,31 +267,29 @@ public class Matcher implements MatchResult {
      * (empty if no match found).
      *
      * Example:
-     *   pattern:  (?&lt;dote&gt;\d+).(?&lt;day&gt;\w+)
-     *   input:    1 Sun foo bar 2 Mon foo
-     *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
+     * pattern:  (?&lt;dote&gt;\d+).(?&lt;day&gt;\w+)
+     * input:    1 Sun foo bar 2 Mon foo
+     * output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
      */
-    public List<Map<String, String>> namedGroups() {
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-        List<String> groupNames = parentPattern.groupNames();
-
-        if (groupNames.isEmpty()) {
-            return result;
+    override fun namedGroups(): List<Map<String?, String>> {
+        val result: MutableList<Map<String?, String>> =
+            ArrayList()
+        val groupNames = parentPattern.groupNames()
+        if (groupNames!!.isEmpty()) {
+            return result
         }
-
-        int nextIndex = 0;
+        var nextIndex = 0
         while (matcher.find(nextIndex)) {
-            Map<String, String> matches = new LinkedHashMap<String, String>();
-
-            for (String groupName : groupNames) {
-                String groupValue = matcher.group(groupIndex(groupName));
-                matches.put(groupName, groupValue);
-                nextIndex = matcher.end();
+            val matches: MutableMap<String?, String> =
+                LinkedHashMap()
+            for (groupName in groupNames) {
+                val groupValue = matcher.group(groupIndex(groupName))
+                matches[groupName] = groupValue
+                nextIndex = matcher.end()
             }
-
-            result.add(matches);
+            result.add(matches)
         }
-        return result;
+        return result
     }
 
     /**
@@ -321,12 +298,12 @@ public class Matcher implements MatchResult {
      * @param groupName name of capture group
      * @return the group index
      */
-    private int groupIndex(String groupName) {
+    private fun groupIndex(groupName: String?): Int {
         // idx+1 because capture groups start 1 in the matcher
         // while the pattern returns a 0-based index of the
         // group name within the list of names
-        int idx = parentPattern.indexOf(groupName);
-        return idx > -1 ? idx + 1 : -1;
+        val idx = parentPattern.indexOf(groupName)
+        return if (idx > -1) idx + 1 else -1
     }
 
     /**
@@ -334,9 +311,7 @@ public class Matcher implements MatchResult {
      *
      * @return the start index
      */
-    public int start() {
-        return matcher.start();
-    }
+    override fun start() = matcher.start()
 
     /**
      * Returns the start index of the subsequence captured by the given
@@ -345,9 +320,7 @@ public class Matcher implements MatchResult {
      * @param group the index of the capture group
      * @return the index
      */
-    public int start(int group) {
-        return matcher.start(group);
-    }
+    override fun start(group: Int) = matcher.start(group)
 
     /**
      * Returns the start index of the subsequence captured by the given
@@ -356,18 +329,14 @@ public class Matcher implements MatchResult {
      * @param groupName the name of the capture group
      * @return the index
      */
-    public int start(String groupName) {
-        return start(groupIndex(groupName));
-    }
+    override fun start(groupName: String?) = start(groupIndex(groupName))
 
     /**
      * Returns the offset after the last character matched.
      *
      * @return the offset
      */
-    public int end() {
-        return matcher.end();
-    }
+    override fun end() = matcher.end()
 
     /**
      * Returns the offset after the last character of the subsequence
@@ -376,9 +345,7 @@ public class Matcher implements MatchResult {
      * @param group the index of the capture group
      * @return the offset
      */
-    public int end(int group) {
-        return matcher.end(group);
-    }
+    override fun end(group: Int) = matcher.end(group)
 
     /**
      * Returns the offset after the last character of the subsequence
@@ -387,9 +354,7 @@ public class Matcher implements MatchResult {
      * @param groupName the name of the capture group
      * @return the offset
      */
-    public int end(String groupName) {
-        return end(groupIndex(groupName));
-    }
+    override fun end(groupName: String?) = end(groupIndex(groupName))
 
     /**
      * Sets the limits of this matcher's region.
@@ -398,9 +363,9 @@ public class Matcher implements MatchResult {
      * @param end The index to end searching at (exclusive)
      * @return this Matcher
      */
-    public Matcher region(int start, int end) {
-        matcher.region(start, end);
-        return this;
+    fun region(start: Int, end: Int): Matcher {
+        matcher.region(start, end)
+        return this
     }
 
     /**
@@ -410,9 +375,7 @@ public class Matcher implements MatchResult {
      *
      * @return the ending point of this matcher's region
      */
-    public int regionEnd() {
-        return matcher.regionEnd();
-    }
+    fun regionEnd() = matcher.regionEnd()
 
     /**
      * Reports the start index of this matcher's region. The searches this
@@ -421,9 +384,7 @@ public class Matcher implements MatchResult {
      *
      * @return The starting point of this matcher's region
      */
-    public int regionStart() {
-        return matcher.regionStart();
-    }
+    fun regionStart() = matcher.regionStart()
 
     /**
      * Returns true if the end of input was hit by the search engine in the
@@ -431,36 +392,28 @@ public class Matcher implements MatchResult {
      *
      * @return true iff the end of input was hit in the last match; false otherwise
      */
-    public boolean hitEnd() {
-        return matcher.hitEnd();
-    }
+    fun hitEnd() = matcher.hitEnd()
 
     /**
      * Returns true if more input could change a positive match into a negative one.
      *
      * @return true iff more input could change a positive match into a negative one.
      */
-    public boolean requireEnd() {
-        return matcher.requireEnd();
-    }
+    fun requireEnd() = matcher.requireEnd()
 
     /**
      * Queries the anchoring of region bounds for this matcher.
      *
      * @return true iff this matcher is using anchoring bounds, false otherwise.
      */
-    public boolean hasAnchoringBounds() {
-        return matcher.hasAnchoringBounds();
-    }
+    fun hasAnchoringBounds() = matcher.hasAnchoringBounds()
 
     /**
      * Queries the transparency of region bounds for this matcher.
      *
      * @return true iff this matcher is using transparent bounds, false otherwise
      */
-    public boolean hasTransparentBounds() {
-        return matcher.hasTransparentBounds();
-    }
+    fun hasTransparentBounds() = matcher.hasTransparentBounds()
 
     /**
      * Replaces every subsequence of the input sequence that matches the pattern
@@ -470,9 +423,9 @@ public class Matcher implements MatchResult {
      * @return The string constructed by replacing each matching subsequence by
      * the replacement string, substituting captured subsequences as needed
      */
-    public String replaceAll(String replacement) {
-        String r = parentPattern.replaceProperties(replacement);
-        return matcher.replaceAll(r);
+    fun replaceAll(replacement: String?): String {
+        val r = parentPattern.replaceProperties(replacement)
+        return matcher.replaceAll(r)
     }
 
     /**
@@ -483,9 +436,8 @@ public class Matcher implements MatchResult {
      * @return The string constructed by replacing the first matching subsequence
      * by the replacement string, substituting captured subsequences as needed
      */
-    public String replaceFirst(String replacement) {
-        return matcher.replaceFirst(parentPattern.replaceProperties(replacement));
-    }
+    fun replaceFirst(replacement: String?) =
+        matcher.replaceFirst(parentPattern.replaceProperties(replacement))
 
     /**
      * Sets the anchoring of region bounds for this matcher.
@@ -493,9 +445,9 @@ public class Matcher implements MatchResult {
      * @param b a boolean indicating whether or not to use anchoring bounds.
      * @return this Matcher
      */
-    public Matcher useAnchoringBounds(boolean b) {
-        matcher.useAnchoringBounds(b);
-        return this;
+    fun useAnchoringBounds(b: Boolean): Matcher {
+        matcher.useAnchoringBounds(b)
+        return this
     }
 
     /**
@@ -504,47 +456,40 @@ public class Matcher implements MatchResult {
      * @param b a boolean indicating whether to use opaque or transparent regions
      * @return this Matcher
      */
-    public Matcher useTransparentBounds(boolean b) {
-        matcher.useTransparentBounds(b);
-        return this;
+    fun useTransparentBounds(b: Boolean): Matcher {
+        matcher.useTransparentBounds(b)
+        return this
     }
 
     /*
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
+    override fun equals(obj: Any?): Boolean {
+        if (obj === this) {
+            return true
         }
         if (obj == null) {
-            return false;
+            return false
         }
-        if (!(obj instanceof Matcher)) {
-            return false;
+        if (obj !is Matcher) {
+            return false
         }
-        Matcher other = (Matcher)obj;
-        if (!parentPattern.equals(other.parentPattern)) {
-            return false;
-        }
-        return matcher.equals(other.matcher);
+        val other = obj
+        return if (parentPattern != other.parentPattern) {
+            false
+        } else matcher == other.matcher
     }
 
     /*
      * (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    @Override
-    public int hashCode() {
-        return parentPattern.hashCode() ^ matcher.hashCode();
-    }
+    override fun hashCode() = parentPattern.hashCode() xor matcher.hashCode()
 
     /*
      * (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    public String toString() {
-        return matcher.toString();
-    }
+    override fun toString() = matcher.toString()
 }
