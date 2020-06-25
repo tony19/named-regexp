@@ -7,7 +7,7 @@ jobs:
         type: string
     working_directory: ~/named-regexp-ci
     docker:
-      - image: adoptopenjdk/openjdk<<parameters.jdk>>
+      - image: adoptopenjdk/maven-openjdk<<parameters.jdk>>
     steps:
       - checkout
       - restore_cache:
@@ -29,4 +29,4 @@ workflows:
       - build:
           matrix:
             parameters:
-              jdk: ['8', '9', '10', '11', '12', '13', '14']
+              jdk: ['8', '9', '10', '11', '12', '13']
