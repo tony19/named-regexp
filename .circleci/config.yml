@@ -5,6 +5,8 @@ jobs:
     parameters:
       jdk:
         type: string
+      buildTarget:
+        type: string
     working_directory: ~/named-regexp-ci
     docker:
       - image: adoptopenjdk/maven-openjdk<<parameters.jdk>>
@@ -17,11 +19,11 @@ jobs:
           paths:
             - ~/.m2
           key: named-regexp-{{ checksum "pom.xml" }}
-      - run: mvn verify -Dgpg.skip
+      - run: mvn verify -Dgpg.skip <<parameters.buildTarget>>
       - store_test_results:
           path: target/surefire-reports
-      - store_artifacts:
-          path: target/named-regexp*.*
+#      - store_artifacts:
+#          path: target/named-regexp*.*
 
 workflows:
   maven_test:
@@ -29,4 +31,10 @@ workflows:
       - build:
           matrix:
             parameters:
-              jdk: ['8', '9', '10', '11', '12', '13']
+              jdk: ['8', '9', '10', '11']
+      - build:
+          matrix:
+            parameters:
+              jdk: ['12', '13']
+              # JDK12+ no longer supports JDK6 as source/target
+              buildTarget: '-Dmaven.compiler.source=7  -Dmaven.compiler.target=7'
