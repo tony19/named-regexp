@@ -32,10 +32,10 @@ workflows:
           matrix:
             parameters:
               jdk: ['8', '9', '10', '11']
-              mvnOptions: '-Dmaven.compiler.source=6 -Dmaven.compiler.target=6'
+              mvnOptions: ['-Dmaven.compiler.source=6 -Dmaven.compiler.target=6']
       - build:
           matrix:
             parameters:
               jdk: ['12', '13']
               # JDK12+ no longer supports JDK6 as source/target
-              mvnOptions: '-Dmaven.compiler.source=7 -Dmaven.compiler.target=7'
+              mvnOptions: ['-Dmaven.compiler.source=7 -Dmaven.compiler.target=7']
