@@ -95,10 +95,6 @@
             <goals>
               <goal>jar</goal>
             </goals>
-            <!-- https://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete -->
-            <configuration>
-              <doclint>${javdoc.doclint}</doclint>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -245,17 +241,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <!-- https://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete -->
-    <profile>
-      <id>disable-java8-doclint</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-      <properties>
-        <javdoc.doclint>none</javdoc.doclint>
-      </properties>
     </profile>
 
   </profiles>
