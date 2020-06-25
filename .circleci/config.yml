@@ -1,13 +1,33 @@
 version: 2.1
 
-orbs:
-  maven: circleci/maven@0.0.12
+jobs:
+  build:
+    parameters:
+      jdk:
+        type: string
+    working_directory: ~/named-regexp-ci
+    docker:
+      - image: adoptopenjdk/maven-openjdk<<parameters.jdk>>
+    steps:
+      - checkout
+      - restore_cache:
+          key: named-regexp-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: named-regexp-{{ checksum "pom.xml" }}
+      - run: mvn verify -Dgpg.skip
+      - store_test_results:
+          path: target/surefire-reports
+      - store_artifacts:
+          path: target/named-regexp*.*
 
 workflows:
   maven_test:
     jobs:
-      - maven/test:
+      - build:
           matrix:
             parameters:
-              executor: ['8.0', '11.0', '12.0', '13.0', '14.0']
+              jdk: ['8', '9', '10', '11', '12', '13']
               command: ['verify -Dgpg.skip']
