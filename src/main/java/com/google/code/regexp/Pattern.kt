@@ -454,10 +454,10 @@ open class Pattern protected constructor(private val namedPattern: String, flags
             // even, there is no escape and the slashes are just literals.
             // If it's odd, one of the slashes (the last one) is escaping
             // the character at the given position.
-            var pos = pos
+            var index = pos
             var numSlashes = 0
-            while (pos > 0 && s[pos - 1] == '\\') {
-                pos--
+            while (index > 0 && s[index - 1] == '\\') {
+                index--
                 numSlashes++
             }
             return numSlashes % 2 != 0
@@ -545,7 +545,7 @@ open class Pattern protected constructor(private val namedPattern: String, flags
         private fun isNoncapturingParen(s: String, pos: Int): Boolean {
 
             //int len = s.length();
-            var isLookbehind = false
+            var isLookbehind: Boolean
 
             // code-coverage reports show that pos and the text to
             // check never exceed len in this class, so it's safe

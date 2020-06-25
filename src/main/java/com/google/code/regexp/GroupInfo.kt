@@ -48,17 +48,16 @@ open class GroupInfo
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    override fun equals(obj: Any?): Boolean {
-        if (obj === this) {
+    override fun equals(other: Any?): Boolean {
+        if (other === this) {
             return true
         }
-        if (obj == null) {
+        if (other == null) {
             return false
         }
-        if (obj !is GroupInfo) {
+        if (other !is GroupInfo) {
             return false
         }
-        val other = obj
         return pos == other.pos && groupIndex == other.groupIndex
     }
 

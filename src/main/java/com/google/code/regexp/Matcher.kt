@@ -275,7 +275,7 @@ open class Matcher : MatchResult {
         val result: MutableList<Map<String?, String>> =
             ArrayList()
         val groupNames = parentPattern.groupNames()
-        if (groupNames!!.isEmpty()) {
+        if (groupNames.isEmpty()) {
             return result
         }
         var nextIndex = 0
@@ -465,17 +465,16 @@ open class Matcher : MatchResult {
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    override fun equals(obj: Any?): Boolean {
-        if (obj === this) {
+    override fun equals(other: Any?): Boolean {
+        if (other === this) {
             return true
         }
-        if (obj == null) {
+        if (other == null) {
             return false
         }
-        if (obj !is Matcher) {
+        if (other !is Matcher) {
             return false
         }
-        val other = obj
         return if (parentPattern != other.parentPattern) {
             false
         } else matcher == other.matcher
