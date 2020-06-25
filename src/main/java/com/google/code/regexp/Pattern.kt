@@ -27,7 +27,7 @@ import java.util.regex.PatternSyntaxException
  *
  * @since 0.1.9
  */
-class Pattern protected constructor(private val namedPattern: String, flags: Int) : Serializable {
+open class Pattern protected constructor(private val namedPattern: String, flags: Int) : Serializable {
     private val pattern: java.util.regex.Pattern
     private var groupNames: List<String?>? = null
     private val groupInfo: Map<String?, MutableList<GroupInfo>?>?

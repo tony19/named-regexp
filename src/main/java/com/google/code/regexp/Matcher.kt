@@ -23,7 +23,7 @@ import java.util.*
  *
  * @since 0.1.9
  */
-class Matcher : MatchResult {
+open class Matcher : MatchResult {
     private var matcher: java.util.regex.Matcher
     private var parentPattern: Pattern
 

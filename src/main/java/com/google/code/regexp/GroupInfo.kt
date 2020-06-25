@@ -21,7 +21,7 @@ import java.io.Serializable
  * Contains the position and group index of capture groups
  * from a named pattern
  */
-class GroupInfo
+open class GroupInfo
 /**
  * Constructs a `GroupInfo` with a group index and string
  * position
