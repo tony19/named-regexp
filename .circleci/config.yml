@@ -7,6 +7,7 @@ jobs:
         type: string
       buildTarget:
         type: string
+        default: ''
     working_directory: ~/named-regexp-ci
     docker:
       - image: adoptopenjdk/maven-openjdk<<parameters.jdk>>
@@ -37,4 +38,4 @@ workflows:
             parameters:
               jdk: ['12', '13']
               # JDK12+ no longer supports JDK6 as source/target
-              buildTarget: '-Dmaven.compiler.source=7  -Dmaven.compiler.target=7'
+              buildTarget: '-Dmaven.compiler.source=7 -Dmaven.compiler.target=7'
