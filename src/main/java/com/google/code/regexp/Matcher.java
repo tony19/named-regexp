@@ -301,7 +301,7 @@ public class Matcher implements MatchResult {
         }
 
         int nextIndex = 0;
-        while (matcher.find(nextIndex)) {
+        while (!matcher.hitEnd() && matcher.find(nextIndex)) {
             Map<String, String> matches = new LinkedHashMap<String, String>();
 
             for (String groupName : groupNames) {

@@ -754,4 +754,13 @@ public class MatcherTest {
         final List<Map<String, String>> groups = matcher.namedGroups();
         assertTrue(groups.isEmpty());
     }
+
+    // tony19/named-regexp#16
+    @Test(timeout=1000)
+    public void testNamedGroupsReturnsWhenMatchesEmptyString() {
+        com.google.code.regexp.Matcher matcher = com.google.code.regexp.Pattern.compile("(?<foo>.*)").matcher("bar");
+        final List<Map<String, String>> groups = matcher.namedGroups();
+        assertEquals(1, groups.size());
+        assertEquals("bar", groups.get(0).get("foo"));
+    }
 }
