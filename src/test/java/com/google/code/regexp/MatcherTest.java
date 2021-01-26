@@ -755,7 +755,7 @@ public class MatcherTest {
         assertTrue(groups.isEmpty());
     }
 
-    // tony19/named-regexp#16
+    // Specify 1 second timeout to account for potential infinite loop (Issue #16)
     @Test(timeout=1000)
     public void testNamedGroupsReturnsWhenMatchesEmptyString() {
         com.google.code.regexp.Matcher matcher = com.google.code.regexp.Pattern.compile("(?<foo>.*)").matcher("bar");
