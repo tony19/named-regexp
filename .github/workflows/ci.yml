@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '8', '9', '10', '11' ]
+        jdk: [ '8', '11' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '12', '13', '14', '15' ]
+        jdk: [ '16', '17', '18' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
