@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.jdk }}
-      - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=6 -Dmaven.compiler.target=6
+      - run: mvn test verify -Dgpg.skip -Dmaven.compiler.source=6 -Dmaven.compiler.target=6
 
   # JDK12+ no longer supports JDK6 as source/target
   build:
@@ -33,4 +33,4 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.jdk }}
-      - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=7 -Dmaven.compiler.target=7
+      - run: mvn test verify -Dgpg.skip -Dmaven.compiler.source=7 -Dmaven.compiler.target=7
