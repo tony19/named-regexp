@@ -1,4 +1,4 @@
-named-regexp [![GitHub release](https://img.shields.io/github/release/tony19/named-regexp.svg?maxAge=2592000)](https://github.com/tony19/named-regexp/releases/) [![CircleCI](https://circleci.com/gh/tony19/named-regexp.svg?style=shield)](https://circleci.com/gh/tony19/named-regexp)
+named-regexp [![GitHub release](https://img.shields.io/github/release/tony19/named-regexp.svg?maxAge=2592000)](https://github.com/tony19/named-regexp/releases/) [![Build](https://github.com/tony19/named-regexp/actions/workflows/ci.yml/badge.svg)](https://github.com/tony19/named-regexp/actions/workflows/ci.yml)
 ---
 
 This lightweight library adds support for [named capture groups][6] in Java 5/6 (and on Android).
