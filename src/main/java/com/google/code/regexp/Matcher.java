@@ -150,7 +150,7 @@ public class Matcher implements MatchResult {
      * <p>If the match succeeds then more information can be obtained via the
      * start, end, and group methods.</p>
      *
-     * @return <tt>true</tt> if, and only if, a subsequence of the input
+     * @return {@code true} if, and only if, a subsequence of the input
      *         sequence matches this matcher's pattern
      */
     public boolean find() {
