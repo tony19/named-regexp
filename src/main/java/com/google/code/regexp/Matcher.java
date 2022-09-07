@@ -207,6 +207,25 @@ public class Matcher implements MatchResult {
     }
 
     /**
+     * Returns a literal replacement {@code String} for the specified
+     * {@code String}.
+     *
+     * This method produces a {@code String} that will work
+     * as a literal replacement {@code s} in the
+     * {@code appendReplacement} method of the {@link Matcher} class.
+     * The {@code String} produced will match the sequence of characters
+     * in {@code s} treated as a literal sequence. Slashes ('\') and
+     * dollar signs ('$') will be given no special meaning.
+     *
+     * @param  s The string to be literalized
+     * @return  A literal string replacement
+     * @since 0.2.7
+     */
+    public static String quoteReplacement(String s) {
+        return java.util.regex.Matcher.quoteReplacement(s);
+    }
+
+    /**
      * Implements a terminal append-and-replace step.
      *
      * @param sb The target string buffer
