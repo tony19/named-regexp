@@ -6,5 +6,5 @@ GPG_TTY=$(tty) mvn $1 -Prelease -Prelease-sign-artifacts release:clean release:p
 
 # To redeploy without touching git (tags, commits, etc), run:
 #   mvn versions:set -DnewVersion=<VERSION>
-#   mvn -B -Prelease -Prelease-sign-artifacts deploy -DskipTests=true
+#   mvn clean deploy
 #   mvn versions:revert
