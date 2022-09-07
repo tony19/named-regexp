@@ -150,7 +150,7 @@ public class Matcher implements MatchResult {
      * <p>If the match succeeds then more information can be obtained via the
      * start, end, and group methods.</p>
      *
-     * @return <tt>true</tt> if, and only if, a subsequence of the input
+     * @return {@code true} if, and only if, a subsequence of the input
      *         sequence matches this matcher's pattern
      */
     public boolean find() {
@@ -204,6 +204,25 @@ public class Matcher implements MatchResult {
     public Matcher appendReplacement(StringBuffer sb, String replacement) {
         matcher.appendReplacement(sb, parentPattern.replaceProperties(replacement));
         return this;
+    }
+
+    /**
+     * Returns a literal replacement {@code String} for the specified
+     * {@code String}.
+     *
+     * This method produces a {@code String} that will work
+     * as a literal replacement {@code s} in the
+     * {@code appendReplacement} method of the {@link Matcher} class.
+     * The {@code String} produced will match the sequence of characters
+     * in {@code s} treated as a literal sequence. Slashes ('\') and
+     * dollar signs ('$') will be given no special meaning.
+     *
+     * @param  s The string to be literalized
+     * @return  A literal string replacement
+     * @since 0.2.7
+     */
+    public static String quoteReplacement(String s) {
+        return java.util.regex.Matcher.quoteReplacement(s);
     }
 
     /**
