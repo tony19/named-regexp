@@ -1,9 +1,10 @@
 named-regexp [![GitHub release](https://img.shields.io/github/release/tony19/named-regexp.svg?maxAge=2592000)](https://github.com/tony19/named-regexp/releases/) [![Build](https://github.com/tony19/named-regexp/actions/workflows/ci.yml/badge.svg)](https://github.com/tony19/named-regexp/actions/workflows/ci.yml)
 ---
 
-This lightweight library adds support for [named capture groups][6] in Java 5/6 (and on Android).
+This lightweight library adds support for [named capture groups][http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
+] in Java 5/6 (and on Android).
 
-This is a fork of the [named-regexp][1] project from Google Code (currently inactive).
+This is a fork of the [named-regexp][http://code.google.com/p/named-regexp] project from Google Code (currently inactive).
 
 
 Usage
@@ -24,7 +25,7 @@ public class NamedRegexpTest {
 }
 ```
 
-See more [examples][3]
+See more [examples][http://tony19.github.com/named-regexp/index.html]
 
 
 Download
@@ -37,11 +38,9 @@ Grab the latest release and include the JAR in your classpath...
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
 </dependency>
 ```
-
-_Any snapshots would be hosted in the [Sonatype snapshot repository][5]._
 
 
 Build
@@ -55,6 +54,24 @@ $ cd named-regexp
 $ mvn package
 ```
 
+Release
+-------
+
+To release a new production version, run the following command:
+
+```bash
+$ ./release.sh
+```
+
+*Releases are deployed to https://repo1.maven.org/maven2/com/github/tony19/named-regexp/*
+
+To release a `SNAPSHOT` (i.e., the version in `pom.xml` ends with `-SNAPSHOT`), run the following command:
+
+```bash
+$ mvn clean deploy
+```
+
+*Snapshots are deployed to https://oss.sonatype.org/content/repositories/snapshots/com/github/tony19/named-regexp/*
 
 License
 -------
@@ -72,10 +89,3 @@ License
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
-[1]: http://code.google.com/p/named-regexp
-[3]: http://tony19.github.com/named-regexp/index.html
-[4]: https://oss.sonatype.org/content/repositories/releases/com/github/tony19/named-regexp/0.2.5/named-regexp-0.2.5.jar
-[5]: https://oss.sonatype.org/content/repositories/snapshots/
-[6]: http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
