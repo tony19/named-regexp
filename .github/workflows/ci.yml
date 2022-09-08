@@ -5,33 +5,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-legacy:
+  build-8-11:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '8', '11' ]
+        jdk: [ '8', '9', '10', '11' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
       - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=6 -Dmaven.compiler.target=6
 
   # JDK12+ no longer supports JDK6 as source/target
-  build:
+  build-12-plus:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '16', '17', '18' ]
+        jdk: [ '12', '13', '14', '15', '16', '17', '18' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
       - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=7 -Dmaven.compiler.target=7

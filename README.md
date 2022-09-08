@@ -45,7 +45,7 @@ Grab the latest release and include the JAR in your classpath...
 Build
 -----
 
-To build `named-regexp` from source, use Maven 2 or higher:
+To build `named-regexp` from source, use Maven 2 or higher and JDK 8 or higher:
 
 ```bash
 $ git clone git://github.com/tony19/named-regexp.git
