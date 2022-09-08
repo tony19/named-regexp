@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: 'microsoft'
+          distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
       - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=6 -Dmaven.compiler.target=6
