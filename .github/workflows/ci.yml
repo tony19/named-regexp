@@ -5,7 +5,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-legacy:
+  build-5-7:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        jdk: [ '5', '6', '7' ]
+    name: JDK ${{ matrix.jdk }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: joschi/setup-jdk@v2
+        with:
+          java-version: ${{ matrix.jdk }}
+      - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=5 -Dmaven.compiler.target=5
+
+  build-8-11:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -21,7 +34,7 @@ jobs:
       - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=6 -Dmaven.compiler.target=6
 
   # JDK12+ no longer supports JDK6 as source/target
-  build:
+  build-12-plus:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
