@@ -5,11 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-6:
+  build-6-7:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '6' ]
+        jdk: [ '6', '7' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
@@ -19,11 +19,11 @@ jobs:
           java-version: ${{ matrix.jdk }}
       - run: mvn verify -Dgpg.skip
 
-  build-7-11:
+  build-8-11:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: [ '7', '8', '9', '10', '11' ]
+        jdk: [ '8', '9', '10', '11' ]
     name: JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v3
