@@ -17,7 +17,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
-      - run: mvn verify -Dgpg.skip -Dmaven.compiler.source=5 -Dmaven.compiler.target=5
+      - run: mvn verify -Dgpg.skip
 
   build-8-11:
     runs-on: ubuntu-20.04
