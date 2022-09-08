@@ -55,6 +55,24 @@ $ cd named-regexp
 $ mvn package
 ```
 
+Release
+-------
+
+To release a new production version, run the following command:
+
+```bash
+$ ./release.sh
+```
+
+*Releases are deployed to https://repo1.maven.org/maven2/com/github/tony19/named-regexp/*
+
+To release a `SNAPSHOT` (i.e., the version in `pom.xml` ends with `-SNAPSHOT`), run the following command:
+
+```bash
+$ mvn clean deploy
+```
+
+*Snapshots are deployed to https://oss.sonatype.org/content/repositories/snapshots/com/github/tony19/named-regexp/*
 
 License
 -------
