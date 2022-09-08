@@ -1,10 +1,9 @@
 named-regexp [![GitHub release](https://img.shields.io/github/release/tony19/named-regexp.svg?maxAge=2592000)](https://github.com/tony19/named-regexp/releases/) [![Build](https://github.com/tony19/named-regexp/actions/workflows/ci.yml/badge.svg)](https://github.com/tony19/named-regexp/actions/workflows/ci.yml)
 ---
 
-This lightweight library adds support for [named capture groups][http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname
-] in Java 5/6 (and on Android).
+This lightweight library adds support for [named capture groups](http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#groupname) in Java 5/6 (and on Android).
 
-This is a fork of the [named-regexp][http://code.google.com/p/named-regexp] project from Google Code (currently inactive).
+This is a fork of the [named-regexp](http://code.google.com/p/named-regexp) project from Google Code (currently inactive).
 
 
 Usage
@@ -25,7 +24,7 @@ public class NamedRegexpTest {
 }
 ```
 
-See more [examples][http://tony19.github.com/named-regexp/index.html]
+See more [examples](http://tony19.github.com/named-regexp/index.html)
 
 
 Download
