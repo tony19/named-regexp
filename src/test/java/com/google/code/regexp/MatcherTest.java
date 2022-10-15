@@ -763,4 +763,17 @@ public class MatcherTest {
         assertEquals(1, groups.size());
         assertEquals("bar", groups.get(0).get("foo"));
     }
+
+    // Issue #26
+    @Test
+    public void testNamedGroupsCanBeCalledMultipleTimes() {
+        final String regex = "/teamDrawer/(?<roomId>.*)";
+        final String url = "/teamDrawer/12345";
+
+        final Matcher matcher = Pattern.compile(regex).matcher(url);
+        final Integer count = matcher.namedGroups().size();
+        final Integer mapCount = matcher.namedGroups().get(0).size();
+        final String value = matcher.namedGroups().get(0).get("roomId");
+        assertEquals("12345", value);
+    }
 }
