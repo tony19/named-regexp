@@ -183,7 +183,7 @@ public class MatcherTest {
 
     @Test
     public void testNamedGroupAfterUnnamedGroups() {
-        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Pattern p = Pattern.compile("(b)(c)(?<named>x)");
         Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
@@ -191,7 +191,7 @@ public class MatcherTest {
 
     @Test
     public void testNamedGroupAfterNoncaptureGroups() {
-        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Pattern p = Pattern.compile("(?:b)(?:c)(?<named>x)");
         Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
