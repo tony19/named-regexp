@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 package com.google.code.regexp;
-
 import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
-
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
+import org.junit.function.ThrowingRunnable;
 import static org.junit.Assert.*;
 
 /**
@@ -35,9 +31,6 @@ public class MatcherTest {
     static final Pattern P = Pattern.compile(PATT);
     Matcher M1;
     Matcher M2;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void beforeTest() {
@@ -126,7 +119,7 @@ public class MatcherTest {
 
         // advance find to last match; the test's timeout
         // protects from accidental infinite loop
-        while(m.find()) ;
+        while(m.find()) { continue; }
 
         // resetting should force m.find() to search from beginning
         m.reset();
@@ -142,7 +135,7 @@ public class MatcherTest {
         // find to the end; the test's timeout protects from
         // infinite loop
         assertTrue(m.find());
-        while(m.find()) ;
+        while(m.find()) { continue; }
 
         m.reset("dummy.*pattern");
         assertFalse(m.find());
@@ -155,24 +148,29 @@ public class MatcherTest {
 
     @Test
     public void testNoMatchesForNamedGroup() {
-        Matcher m = P.matcher("abcd");
+        final Matcher m = P.matcher("abcd");
         assertFalse(m.find());
 
-        // throws IllegalStateException("No match found")
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("No match found");
-        m.group("named");
+        Exception e = assertThrows(IllegalStateException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                m.group("named");
+            }
+        });
+        assertEquals("No match found", e.getMessage());
     }
 
     @Test
     public void testNoMatchesForInvalidGroupName() {
-        Matcher m = P.matcher("abcfoo");
+        final Matcher m = P.matcher("abcfoo");
         assertTrue(m.find());
-
-        // throws IndexOutOfBoundsException: No group "nonexistentName"
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage("No group \"nonexistentName\"");
-        m.group("nonexistentName");
+        Exception e = assertThrows(IndexOutOfBoundsException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                m.group("nonexistentName");
+            }
+        });
+        assertEquals("No group \"nonexistentName\"", e.getMessage());
     }
 
     @Test
@@ -185,7 +183,7 @@ public class MatcherTest {
 
     @Test
     public void testNamedGroupAfterUnnamedGroups() {
-        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Pattern p = Pattern.compile("(b)(c)(?<named>x)");
         Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
@@ -193,7 +191,7 @@ public class MatcherTest {
 
     @Test
     public void testNamedGroupAfterNoncaptureGroups() {
-        Pattern p = Pattern.compile("(?:c)(?<named>x)");
+        Pattern p = Pattern.compile("(?:b)(?:c)(?<named>x)");
         Matcher m = p.matcher("abcx");
         m.find();
         assertEquals("x", m.group("named"));
@@ -260,7 +258,7 @@ public class MatcherTest {
     }
 
     @Test
-    public void testIndexOfNestedNamedGroup() {
+    public void testNestedNamedGroup() {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("abcdx");
         m.find();
@@ -385,17 +383,20 @@ public class MatcherTest {
 
     @Test
     public void testEqualsReturnsTrueForSameMatcher() {
+        //noinspection SimplifiableAssertion
         assertTrue(M1.equals(M1));
     }
 
     @Test
     public void testEqualsReturnsFalseForTwoMatchersWithIdenticalValues() {
+        //noinspection SimplifiableAssertion
         assertFalse(M1.equals(M2));
     }
 
     @Test
     public void testEqualsReturnsFalseForTwoMatchersWithDifferentValues() {
         Matcher m2 = P.matcher("foo bar");
+        //noinspection SimplifiableAssertion
         assertFalse(M1.equals(m2));
     }
 
@@ -404,42 +405,49 @@ public class MatcherTest {
         Pattern p2 = Pattern.compile("(a)(b)(?:c)(?<named>x)");
         Matcher m1 = P.matcher("Lorem abcx ipsum");
         Matcher m2 = p2.matcher("Lorem abcx ipsum");
+        //noinspection SimplifiableAssertion
         assertFalse(m1.equals(m2));
     }
 
     @Test
     public void testEqualsReturnsFalseWhenComparedWithNull() {
+        //noinspection ConstantConditions,SimplifiableAssertion
         assertFalse(M1.equals(null));
     }
 
     @Test
     public void testEqualsReturnsFalseWhenComparedWithDifferentDataType() {
+        //noinspection SimplifiableAssertion
         assertFalse(M1.equals(new Object()));
     }
 
     @Test
     public void testHashCodeGetsUniqueHashForTwoMatchersWithIdenticalValues() {
-        assertFalse(M1.hashCode() == M2.hashCode());
+        assertNotEquals(M1.hashCode(), M2.hashCode());
     }
 
     @Test
     public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentValues() {
         Matcher m2 = P.matcher("foo bar");
-        assertFalse(M1.hashCode() == m2.hashCode());
+        assertNotEquals(M1.hashCode(), m2.hashCode());
     }
 
     @Test
     public void testHashCodeGetsUniqueHashForTwoMatchersWithDifferentParentPatterns() {
         Pattern p2 = Pattern.compile("foo bar");
         Matcher m2 = p2.matcher("Lorem abcx ipsum");
-        assertFalse(M1.hashCode() == m2.hashCode());
+        assertNotEquals(M1.hashCode(), m2.hashCode());
     }
 
     @Test
     public void testUsePatternNullThrowsException() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("newPattern cannot be null");
-        M1.usePattern(null);
+        Exception e = assertThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.usePattern(null);
+            }
+        });
+        assertEquals("newPattern cannot be null", e.getMessage());
     }
 
     @Test
@@ -474,11 +482,15 @@ public class MatcherTest {
 
     @Test
     public void testAppendReplacementWithInvalidNamedRefs() {
-        thrown.expect(PatternSyntaxException.class);
-        thrown.expectMessage("unknown group name near index 2\n" +
-                             "${nonexistentName} foobar!\n" +
-                             "  ^");
-        M1.appendReplacement(new StringBuffer(), "${nonexistentName} foobar!");
+        Exception e = assertThrows(PatternSyntaxException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.appendReplacement(new StringBuffer(), "${nonexistentName} foobar!");
+            }
+        });
+        assertEquals("unknown group name near index 2\n" +
+                "${nonexistentName} foobar!\n" +
+                "  ^", e.getMessage());
     }
 
     @Test
@@ -502,18 +514,26 @@ public class MatcherTest {
 
     @Test
     public void testRegionInvalidStartIndexThrowsException() {
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage("start");
-        M1.region(-100, 1);
-        M1.region(1000000000, 1);
+        Exception e = assertThrows(IndexOutOfBoundsException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.region(-100, 1);
+                M1.region(1000000000, 1);
+            }
+        });
+        assertEquals("start", e.getMessage());
     }
 
     @Test
     public void testRegionInvalidEndIndexThrowsException() {
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage("end");
-        M1.region(0, -100);
-        M1.region(0, 1000000000);
+        Exception e = assertThrows(IndexOutOfBoundsException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.region(0, -100);
+                M1.region(0, 1000000000);
+            }
+        });
+        assertEquals("end", e.getMessage());
     }
 
     @Test
@@ -523,6 +543,7 @@ public class MatcherTest {
 
         Matcher m = M1.region(firstPos + 1, INPUT.length());
         assertTrue(m.find());
+        //noinspection ConstantConditions
         assertTrue(firstPos != lastPos);
         assertEquals(lastPos, m.start());
         assertEquals(lastPos + "abcfoo".length(), m.end());
@@ -541,7 +562,7 @@ public class MatcherTest {
     @Test( timeout = 5000 )
     public void testHitEndGetsTrueWhenNoMoreMatches() {
         // the test's timeout protects from infinite loop
-        while (M1.find()) ;
+        while (M1.find()) { continue; }
         assertTrue(M1.hitEnd());
     }
 
@@ -624,11 +645,15 @@ public class MatcherTest {
 
     @Test
     public void testReplaceAllWithInvalidNamedRefs() {
-        thrown.expect(PatternSyntaxException.class);
-        thrown.expectMessage("unknown group name near index 2\n" +
-                             "${nonexistentName} foobar!\n" +
-                             "  ^");
-        M1.replaceAll("${nonexistentName} foobar!");
+        Exception e = assertThrows(PatternSyntaxException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.replaceAll("${nonexistentName} foobar!");
+            }
+        });
+        assertEquals("unknown group name near index 2\n" +
+                "${nonexistentName} foobar!\n" +
+                "  ^", e.getMessage());
     }
 
     @Test
@@ -643,11 +668,15 @@ public class MatcherTest {
 
     @Test
     public void testReplaceFirstWithInvalidNamedRefs() {
-        thrown.expect(PatternSyntaxException.class);
-        thrown.expectMessage("unknown group name near index 2\n" +
-                             "${nonexistentName} foobar!\n" +
-                             "  ^");
-        M1.replaceFirst("${nonexistentName} foobar!");
+        Exception e = assertThrows(PatternSyntaxException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                M1.replaceFirst("${nonexistentName} foobar!");
+            }
+        });
+        assertEquals("unknown group name near index 2\n" +
+                "${nonexistentName} foobar!\n" +
+                "  ^", e.getMessage());
     }
 
     @Test
@@ -702,12 +731,16 @@ public class MatcherTest {
     @Test
     public void testQuoteEscapedPatternDoesNotCreateNamedGroup() {
         Pattern p = Pattern.compile("\\Q(?<foo>\\d+)\\E (?<name>abc\\d+)");
-        Matcher m = p.matcher("(?<foo>\\d+) abc123");
+        final Matcher m = p.matcher("(?<foo>\\d+) abc123");
         assertTrue(m.find());
 
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage("No group \"foo\"");
-        m.group("foo");
+        Exception e = assertThrows(IndexOutOfBoundsException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                m.group("foo");
+            }
+        });
+        assertEquals("No group \"foo\"", e.getMessage());
     }
 
     @Test
@@ -772,7 +805,9 @@ public class MatcherTest {
 
         final Matcher matcher = Pattern.compile(regex).matcher(url);
         final Integer count = matcher.namedGroups().size();
+        assertEquals(Integer.valueOf(1), count);
         final Integer mapCount = matcher.namedGroups().get(0).size();
+        assertEquals(Integer.valueOf(1), mapCount);
         final String value = matcher.namedGroups().get(0).get("roomId");
         assertEquals("12345", value);
     }
