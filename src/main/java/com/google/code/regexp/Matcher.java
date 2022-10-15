@@ -320,7 +320,9 @@ public class Matcher implements MatchResult {
         }
 
         int nextIndex = 0;
-        while (!matcher.hitEnd() && matcher.find(nextIndex)) {
+        int lastNextIndex = 0;
+        matcher.reset();
+        while (matcher.find(nextIndex)) {
             Map<String, String> matches = new LinkedHashMap<String, String>();
 
             for (String groupName : groupNames) {
@@ -328,6 +330,11 @@ public class Matcher implements MatchResult {
                 matches.put(groupName, groupValue);
                 nextIndex = matcher.end();
             }
+
+            if (nextIndex == lastNextIndex) {
+                break;
+            }
+            lastNextIndex = nextIndex;
 
             result.add(matches);
         }
