@@ -258,7 +258,7 @@ public class MatcherTest {
     }
 
     @Test
-    public void testIndexOfNestedNamedGroup() {
+    public void testNestedNamedGroup() {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("abcdx");
         m.find();
