@@ -27,20 +27,24 @@ public class NamedRegexpTest {
 See more [examples](http://tony19.github.com/named-regexp/index.html)
 
 
-Download
+Install
 --------
-Grab the latest release and include the JAR in your classpath...
 
-*OR* Maven users can simply add this dependency:
+### Gradle
+```gradle
+implementation 'com.github.tony19:named-regexp:0.2.8'
+```
 
+### Maven
 ```xml
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>0.2.7</version>
+  <version>0.2.8</version>
 </dependency>
 ```
 
+[Maven Central](https://search.maven.org/artifact/com.github.tony19/named-regexp)
 
 Build
 -----
