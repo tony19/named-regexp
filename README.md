@@ -24,9 +24,6 @@ public class NamedRegexpTest {
 }
 ```
 
-See more [examples](http://tony19.github.com/named-regexp/index.html)
-
-
 Install
 --------
 
