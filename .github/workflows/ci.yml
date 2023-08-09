@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-8-11:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         jdk: [ '8', '9', '10', '11' ]
@@ -22,7 +22,7 @@ jobs:
 
   # JDK12+ no longer supports JDK6 as source/target
   build-12-plus:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         jdk: [ '12', '13', '14', '15', '16', '17', '18' ]
