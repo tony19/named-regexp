@@ -12,7 +12,7 @@ jobs:
         jdk: [ '8', '9', '10', '11' ]
     name: JDK ${{ matrix.jdk }}
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -28,7 +28,7 @@ jobs:
         jdk: [ '12', '13', '14', '15', '16', '17', '18' ]
     name: JDK ${{ matrix.jdk }}
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
