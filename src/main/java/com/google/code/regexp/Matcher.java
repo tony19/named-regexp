@@ -16,6 +16,8 @@
 package com.google.code.regexp;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,6 +301,33 @@ public class Matcher implements MatchResult {
     }
 
     /**
+     * Returns a map of the pattern's named groups and indexes within the pattern.
+     *
+     * @return an unmodifiable map of group names to 1-based indexes
+     * (empty if named groups not found).
+     *
+     * Example:
+     *   pattern:  (a)(b)(?&lt;group1&gt;x)(c)(?&lt;group2&gt;y)
+     *   output:   {"group1": 3, "group2": 5}
+     *
+     * @since 1.0.0
+     */
+    public Map<String, Integer> namedGroups() {
+        // Normally, this API isn't needed as this library is a backport
+        // of named groups, introduced in JDK7, but some users are
+        // using on this library in newer JDKs for whatever reason.
+        // https://github.com/tony19/named-regexp/issues/73
+        Map<String, Integer> result = new HashMap<String, Integer>();
+        Map<String, List<GroupInfo>> groupInfo = parentPattern.groupInfo();
+
+        for (Map.Entry<String, List<GroupInfo>> entry : groupInfo.entrySet()) {
+            // groupIndex() is 0-based and we need it 1-based for capture groups
+            result.put(entry.getKey(), entry.getValue().get(0).groupIndex() + 1);
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
+    /**
      * Finds all named groups that exist in the input string. This resets the
      * matcher and attempts to match the input against the pre-specified
      * pattern.
@@ -310,8 +339,10 @@ public class Matcher implements MatchResult {
      *   pattern:  (?&lt;dote&gt;\d+).(?&lt;day&gt;\w+)
      *   input:    1 Sun foo bar 2 Mon foo
      *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
+     *
+     * @since 1.0.0
      */
-    public List<Map<String, String>> namedGroups() {
+    public List<Map<String, String>> namedGroupsList() {
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         List<String> groupNames = parentPattern.groupNames();
 
