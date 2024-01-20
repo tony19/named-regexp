@@ -39,7 +39,7 @@ public class MatcherTest {
     }
 
     @Test
-    public void testFindSucceedsInFindingTaret() {
+    public void testFindSucceedsInFindingTarget() {
         assertTrue(P.matcher("abcfoo").find());
     }
 
