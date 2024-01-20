@@ -29,7 +29,7 @@ Install
 
 ### Gradle
 ```gradle
-implementation 'com.github.tony19:named-regexp:0.2.8'
+implementation 'com.github.tony19:named-regexp:1.0.0'
 ```
 
 ### Maven
@@ -37,7 +37,7 @@ implementation 'com.github.tony19:named-regexp:0.2.8'
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>0.2.8</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -76,7 +76,7 @@ $ mvn clean deploy
 License
 -------
 
-    Copyright 2022 Anthony Trinh.
+    Copyright 2024 Anthony Trinh.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
