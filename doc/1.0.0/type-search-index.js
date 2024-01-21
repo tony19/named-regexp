@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.google.code.regexp","l":"GroupInfo"},{"p":"com.google.code.regexp","l":"Matcher"},{"p":"com.google.code.regexp","l":"MatchResult"},{"p":"com.google.code.regexp","l":"Pattern"}];updateSearchResults();
