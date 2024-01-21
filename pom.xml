@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
   <name>named-regexp</name>
   <description>Named capturing groups for Java 5/6</description>
-  <version>0.2.9-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <url>https://github.com/tony19/named-regexp</url>
 
   <licenses>
@@ -120,6 +120,20 @@
   </build>
 
   <profiles>
+    <profile>
+      <!--
+       If using JDK 12+, switch to Java 8 here (the minimum
+       supported version). Some users that mainly depend on newer
+       JDKS are still using this library for backward compatibility.
+       -->
+      <id>set-compiler-release</id>
+      <activation>
+        <jdk>[12,)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+    </profile>
     <profile>
       <id>release-sign-artifacts</id>
       <activation>

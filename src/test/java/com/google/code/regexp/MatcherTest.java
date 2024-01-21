@@ -39,7 +39,7 @@ public class MatcherTest {
     }
 
     @Test
-    public void testFindSucceedsInFindingTaret() {
+    public void testFindSucceedsInFindingTarget() {
         assertTrue(P.matcher("abcfoo").find());
     }
 
@@ -279,7 +279,7 @@ public class MatcherTest {
 
     @Test
     public void testNamedGroupsDoesNotThrowIndexOutOfBounds() {
-        // NamedMatcher.namedGroups() is used to get a map of
+        // Matcher#namedGroupsList() is used to get a map of
         // group names to group values. This should ignore unnamed
         // groups (exclude them from the map), but the unnamed
         // groups were throwing off the function, causing it to
@@ -288,7 +288,7 @@ public class MatcherTest {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("abcdx");
         try {
-            m.namedGroups();
+            m.namedGroupsList();
             // verified here: IndexOutOfBoundsException did not occur
         } catch (IndexOutOfBoundsException e) {
             fail("IndexOutOfBoundsException should have been fixed");
@@ -300,7 +300,7 @@ public class MatcherTest {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("abcdxyz");
 
-        List<Map<String, String>> list = m.namedGroups();
+        List<Map<String, String>> list = m.namedGroupsList();
         assertEquals(1, list.size());
 
         Map<String, String> map = list.get(0);
@@ -315,7 +315,7 @@ public class MatcherTest {
         Pattern p = Pattern.compile("(a)(?<foo>b)(?:c)(?<bar>d(?<named>x))");
         Matcher m = p.matcher("nada");
 
-        List<Map<String, String>> list = m.namedGroups();
+        List<Map<String, String>> list = m.namedGroupsList();
         assertEquals(0, list.size());
     }
 
@@ -757,7 +757,7 @@ public class MatcherTest {
         Pattern pattern = Pattern.compile("(?<digit>\\d)(\\w)");
         Matcher matcher = pattern.matcher("2foo3bar4");
 
-        final List<Map<String, String>> groups = matcher.namedGroups();
+        final List<Map<String, String>> groups = matcher.namedGroupsList();
         assertEquals(2, groups.size());
         assertEquals("2", groups.get(0).get("digit"));
         assertEquals("3", groups.get(1).get("digit"));
@@ -768,7 +768,7 @@ public class MatcherTest {
         Pattern pattern = Pattern.compile("(?<dayOfYear>\\d+).(?<dayName>\\w+)");
         Matcher matcher = pattern.matcher("1 Sunday foo bar 2 Monday foo bar 3 Tuesday foo bar 4 Wednesday foo bar 5 Thursday foo bar 6 Friday foo bar  7 Saturday foo bar 8 Sunday foo bar 9 Monday foo bar 10 Tuesday foo bar ");
 
-        final List<Map<String, String>> groups = matcher.namedGroups();
+        final List<Map<String, String>> groups = matcher.namedGroupsList();
         final String[] DAYS = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday"};
         assertEquals(DAYS.length, groups.size());
 
@@ -784,7 +784,7 @@ public class MatcherTest {
         Pattern pattern = Pattern.compile("\\d+ no groups");
         Matcher matcher = pattern.matcher("123 no groups");
 
-        final List<Map<String, String>> groups = matcher.namedGroups();
+        final List<Map<String, String>> groups = matcher.namedGroupsList();
         assertTrue(groups.isEmpty());
     }
 
@@ -792,7 +792,7 @@ public class MatcherTest {
     @Test(timeout=1000)
     public void testNamedGroupsReturnsWhenMatchesEmptyString() {
         com.google.code.regexp.Matcher matcher = com.google.code.regexp.Pattern.compile("(?<foo>.*)").matcher("bar");
-        final List<Map<String, String>> groups = matcher.namedGroups();
+        final List<Map<String, String>> groups = matcher.namedGroupsList();
         assertEquals(1, groups.size());
         assertEquals("bar", groups.get(0).get("foo"));
     }
@@ -804,11 +804,22 @@ public class MatcherTest {
         final String url = "/teamDrawer/12345";
 
         final Matcher matcher = Pattern.compile(regex).matcher(url);
-        final Integer count = matcher.namedGroups().size();
+        final Integer count = matcher.namedGroupsList().size();
         assertEquals(Integer.valueOf(1), count);
-        final Integer mapCount = matcher.namedGroups().get(0).size();
+        final Integer mapCount = matcher.namedGroupsList().get(0).size();
         assertEquals(Integer.valueOf(1), mapCount);
-        final String value = matcher.namedGroups().get(0).get("roomId");
+        final String value = matcher.namedGroupsList().get(0).get("roomId");
         assertEquals("12345", value);
+    }
+
+    @Test
+    public void testMatcherNamedGroupsGetsMapsOfGroupIndexes() {
+        // Test compatibility with MatchResult#namedGroups added in JDK20
+        // https://github.com/tony19/named-regexp/issues/73
+        Pattern p = Pattern.compile("(b)(c)(?<named1>x)(d)(?<named2>y)");
+        MatchResult m = p.matcher("abcxdy");
+        Map<String, Integer> groupIndexes = m.namedGroups();
+        assertEquals(Integer.valueOf(3), groupIndexes.get("named1"));
+        assertEquals(Integer.valueOf(5), groupIndexes.get("named2"));
     }
 }

@@ -37,11 +37,33 @@ public interface MatchResult extends java.util.regex.MatchResult {
     public List<String> orderedGroups();
 
     /**
-     * Returns the named capture groups
+     * Finds all named groups that exist in the input string
      *
-     * @return the named capture groups
+     * @return a list of maps, each containing name-value matches
+     * (empty if no match found).
+     *
+     * Example:
+     *   pattern:  (?&lt;dote&gt;\d+).(?&lt;day&gt;\w+)
+     *   input:    1 Sun foo bar 2 Mon foo
+     *   output:   [{"date":"1", "day":"Sun"}, {"date":"2", "day":"Mon"}]
+     *
+     * @since 1.0.0
      */
-    public List<Map<String, String>> namedGroups();
+    public List<Map<String, String>> namedGroupsList();
+
+    /**
+     * Returns a map of the pattern's named groups and indexes within the pattern.
+     *
+     * @return an unmodifiable map of group names to 1-based indexes
+     * (empty if named groups not found).
+     *
+     * Example:
+     *   pattern:  (a)(b)(?&lt;group1&gt;x)(c)(?&lt;group2&gt;y)
+     *   output:   {"group1": 3, "group2": 5}
+     *
+     * @since 1.0.0
+     */
+    public Map<String, Integer> namedGroups();
 
     /**
      * Returns the input subsequence captured by the given group during the
