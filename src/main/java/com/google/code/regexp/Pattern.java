@@ -47,21 +47,6 @@ public class Pattern implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    /** Pattern to match group names */
-    private static final String NAME_PATTERN = "[^!=].*?";
-
-    /** Pattern to match named capture groups in a pattern string */
-    private static final java.util.regex.Pattern NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\(\\?<(" + NAME_PATTERN + ")>", java.util.regex.Pattern.DOTALL);
-
-    /** Pattern to match back references for named capture groups */
-    private static final java.util.regex.Pattern BACKREF_NAMED_GROUP_PATTERN = java.util.regex.Pattern.compile("\\\\k<(" + NAME_PATTERN + ")>", java.util.regex.Pattern.DOTALL);
-
-    /** Pattern to match properties for named capture groups in a replacement string */
-    private static final java.util.regex.Pattern PROPERTY_PATTERN = java.util.regex.Pattern.compile("\\$\\{(" + NAME_PATTERN + ")\\}", java.util.regex.Pattern.DOTALL);
-
-    /** index of group within patterns above where group name is captured */
-    private static final int INDEX_GROUP_NAME = 1;
-
     /** {@link java.util.regex.Pattern#UNIX_LINES} */
     public static final int UNIX_LINES = java.util.regex.Pattern.UNIX_LINES;
 
@@ -263,11 +248,7 @@ public class Pattern implements Serializable {
      * @throws PatternSyntaxException group name was not found
      */
     public String replaceProperties(String replacementPattern) {
-        return replaceGroupNameWithIndex(
-                new StringBuilder(replacementPattern),
-                PROPERTY_PATTERN,
-                "$"
-                ).toString();
+        return replaceGroupNameWithIndex(replacementPattern, "${", '}', "$");
     }
 
     /**
@@ -322,109 +303,87 @@ public class Pattern implements Serializable {
     }
 
     /**
-     * Determines if the character at the specified position
-     * of a string is escaped
-     *
-     * @param s string to evaluate
-     * @param pos the position of the character to evaluate
-     * @return true if the character is escaped; otherwise false
+     * Pre-computed, per-character syntax info for a string. Building it
+     * takes O(n) time and every lookup is O(1), so parsing named groups
+     * stays linear in the length of the input. (Before this, every lookup
+     * rescanned the string, and compiling a pattern with many groups took
+     * cubic time, which allowed denial of service.)
      */
-    static private boolean isEscapedChar(String s, int pos) {
-        return isSlashEscapedChar(s, pos) || isQuoteEscapedChar(s, pos);
-    }
+    static private final class SyntaxInfo {
+        /** true if the character at the index is escaped (by a backslash or \Q..\E) */
+        final boolean[] escaped;
+        /** number of capturing groups opened before the index */
+        final int[] capturingParensBefore;
+        /** index of the first '&gt;' at or after the index; -1 if none */
+        final int[] nextGt;
+        /** index of the first '}' at or after the index; -1 if none */
+        final int[] nextCloseBrace;
 
-    /**
-     * Determines if the character at the specified position
-     * of a string is escaped with a backslash
-     *
-     * @param s string to evaluate
-     * @param pos the position of the character to evaluate
-     * @return true if the character is escaped; otherwise false
-     */
-    static private boolean isSlashEscapedChar(String s, int pos) {
+        SyntaxInfo(String s) {
+            final int len = s.length();
+            escaped = new boolean[len];
+            capturingParensBefore = new int[len + 1];
+            nextGt = new int[len + 1];
+            nextCloseBrace = new int[len + 1];
 
-        // Count the backslashes preceding this position. If it's
-        // even, there is no escape and the slashes are just literals.
-        // If it's odd, one of the slashes (the last one) is escaping
-        // the character at the given position.
-        int numSlashes = 0;
-        while (pos > 0 && (s.charAt(pos - 1) == '\\')) {
-            pos--;
-            numSlashes++;
-        }
-        return numSlashes % 2 != 0;
-    }
+            boolean[] slashEscaped = new boolean[len];
+            int slashRun = 0;          // number of consecutive backslashes right before i
+            int lastOpenQuote = -1;    // start of last unescaped "\Q" that ends at or before i
+            int lastCloseQuote = -1;   // start of last "\E" that ends at or before i
+            int lastOpenBracket = -1;  // last unescaped '[' before i
+            int lastCloseBracket = -1; // last unescaped ']' before i
+            int parens = 0;
 
-    /**
-     * Determines if the character at the specified position
-     * of a string is quote-escaped (between \\Q and \\E)
-     *
-     * @param s string to evaluate
-     * @param pos the position of the character to evaluate
-     * @return true if the character is quote-escaped; otherwise false
-     */
-    static private boolean isQuoteEscapedChar(String s, int pos) {
-
-        boolean openQuoteFound = false;
-        boolean closeQuoteFound = false;
-
-        // find last non-escaped open-quote
-        String s2 = s.substring(0, pos);
-        int posOpen = pos;
-        while ((posOpen = s2.lastIndexOf("\\Q", posOpen - 1)) != -1) {
-            if (!isSlashEscapedChar(s2, posOpen)) {
-                openQuoteFound = true;
-                break;
-            }
-        }
-
-        if (openQuoteFound) {
-            // search remainder of string (after open-quote) for a close-quote;
-            // no need to check that it's slash-escaped because it can't be
-            // (the escape character itself is part of the literal when quoted)
-            if (s2.indexOf("\\E", posOpen) != -1) {
-                closeQuoteFound = true;
-            }
-        }
-
-        return openQuoteFound && !closeQuoteFound;
-    }
-
-    /**
-     * Determines if a string's character is within a regex character class
-     *
-     * @param s string to evaluate
-     * @param pos the position of the character to evaluate
-     * @return true if the character is inside a character class; otherwise false
-     */
-    static private boolean isInsideCharClass(String s, int pos) {
-
-        boolean openBracketFound = false;
-        boolean closeBracketFound = false;
-
-        // find last non-escaped open-bracket
-        String s2 = s.substring(0, pos);
-        int posOpen = pos;
-        while ((posOpen = s2.lastIndexOf('[', posOpen - 1)) != -1) {
-            if (!isEscapedChar(s2, posOpen)) {
-                openBracketFound = true;
-                break;
-            }
-        }
-
-        if (openBracketFound) {
-            // search remainder of string (after open-bracket) for a close-bracket
-            String s3 = s.substring(posOpen, pos);
-            int posClose = -1;
-            while ((posClose = s3.indexOf(']', posClose + 1)) != -1) {
-                if (!isEscapedChar(s3, posClose)) {
-                    closeBracketFound = true;
-                    break;
+            for (int i = 0; i < len; i++) {
+                // account for a "\Q" or "\E" that ends right before i
+                if (i >= 2 && s.charAt(i - 2) == '\\') {
+                    char c = s.charAt(i - 1);
+                    if (c == 'Q' && !slashEscaped[i - 2]) {
+                        lastOpenQuote = i - 2;
+                    } else if (c == 'E') {
+                        lastCloseQuote = i - 2;
+                    }
                 }
+
+                // An odd number of preceding backslashes means the last one
+                // escapes this character. Inside \Q..\E, everything is literal.
+                slashEscaped[i] = slashRun % 2 != 0;
+                boolean quoteEscaped = lastOpenQuote >= 0 && lastCloseQuote < lastOpenQuote;
+                escaped[i] = slashEscaped[i] || quoteEscaped;
+                boolean insideCharClass = lastOpenBracket >= 0 && lastCloseBracket < lastOpenBracket;
+
+                char ch = s.charAt(i);
+                if (!escaped[i]) {
+                    if (ch == '[') {
+                        lastOpenBracket = i;
+                    } else if (ch == ']') {
+                        lastCloseBracket = i;
+                    }
+                }
+
+                capturingParensBefore[i] = parens;
+                // ignore parentheses inside character classes (e.g., [0-9()a-f]),
+                // which are literals; also ignore escaped and non-capturing parens
+                if (ch == '(' && !insideCharClass && !escaped[i] && !isNoncapturingParen(s, i)) {
+                    parens++;
+                }
+
+                slashRun = (ch == '\\') ? slashRun + 1 : 0;
+            }
+            capturingParensBefore[len] = parens;
+
+            int gt = -1;
+            int brace = -1;
+            nextGt[len] = -1;
+            nextCloseBrace[len] = -1;
+            for (int i = len - 1; i >= 0; i--) {
+                char ch = s.charAt(i);
+                if (ch == '>') gt = i;
+                if (ch == '}') brace = i;
+                nextGt[i] = gt;
+                nextCloseBrace[i] = brace;
             }
         }
-
-        return openBracketFound && !closeBracketFound;
     }
 
     /**
@@ -433,62 +392,59 @@ public class Pattern implements Serializable {
      * the flag specifiers (e.g., (?s) or (?m) or (?:pattern).
      * If the parenthesis is followed by "?", it must be a non-
      * capturing group unless it's a named group (which begins
-     * with "?<"). Make sure not to confuse it with the lookbehind
-     * construct ("?<=" or "?<!").
+     * with "?&lt;"). Make sure not to confuse it with the lookbehind
+     * construct ("?&lt;=" or "?&lt;!").
      *
      * @param s string to evaluate
      * @param pos the position of the parenthesis to evaluate
      * @return true if the parenthesis is non-capturing; otherwise false
      */
     static private boolean isNoncapturingParen(String s, int pos) {
-
-        //int len = s.length();
-        boolean isLookbehind = false;
-
-        // code-coverage reports show that pos and the text to
-        // check never exceed len in this class, so it's safe
-        // to not test for it, which resolves uncovered branches
-        // in Cobertura
-
-        /*if (pos >= 0 && pos + 4 < len)*/ {
-            String pre = s.substring(pos, pos+4);
-            isLookbehind = pre.equals("(?<=") || pre.equals("(?<!");
+        final int len = s.length();
+        if (pos + 1 >= len || s.charAt(pos + 1) != '?') {
+            return false;
         }
-        return /*(pos >= 0 && pos + 2 < len) &&*/
-               s.charAt(pos + 1) == '?' &&
-               (isLookbehind || s.charAt(pos + 2) != '<');
+        if (pos + 2 >= len || s.charAt(pos + 2) != '<') {
+            return true;
+        }
+        // "(?<=" and "(?<!" are lookbehinds; anything else is a named group
+        return pos + 3 < len && (s.charAt(pos + 3) == '=' || s.charAt(pos + 3) == '!');
     }
 
     /**
-     * Counts the open-parentheses to the left of a string position,
-     * excluding escaped parentheses
+     * Finds all non-overlapping occurrences of a named construct in a
+     * string, consisting of a prefix (e.g., "(?&lt;"), a name, and a closing
+     * character (e.g., '&gt;'). The name is at least one character long, and
+     * its first character is not '!' or '='. This is equivalent to finding
+     * the regular expression {@code PREFIX([^!=].*?)CLOSER} (with DOTALL),
+     * but runs in linear time.
      *
      * @param s string to evaluate
-     * @param pos ending position of string; characters to the left
-     * of this position are evaluated
-     * @return number of open parentheses
+     * @param prefix the prefix of the construct
+     * @param nextCloser lookup table of the next position of the closing character
+     * @return list of {start of construct, start of name, position of closer}
      */
-    static private int countOpenParens(String s, int pos) {
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\(");
-        java.util.regex.Matcher m = p.matcher(s.subSequence(0, pos));
-
-        int numParens = 0;
-
-        while (m.find()) {
-            // ignore parentheses inside character classes: [0-9()a-f]
-            // which are just literals
-            if (isInsideCharClass(s, m.start())) {
-                continue;
+    static private List<int[]> findNamedConstructs(String s, String prefix, int[] nextCloser) {
+        List<int[]> matches = new ArrayList<int[]>();
+        final int len = s.length();
+        int p = s.indexOf(prefix);
+        while (p != -1) {
+            int nameStart = p + prefix.length();
+            int closer = -1;
+            if (nameStart < len) {
+                char c = s.charAt(nameStart);
+                if (c != '!' && c != '=') {
+                    closer = nextCloser[nameStart + 1];
+                }
             }
-
-            // ignore escaped parens
-            if (isEscapedChar(s, m.start())) continue;
-
-            if (!isNoncapturingParen(s, m.start())) {
-                numParens++;
+            if (closer == -1) {
+                p = s.indexOf(prefix, p + 1);
+            } else {
+                matches.add(new int[] { p, nameStart, closer });
+                p = s.indexOf(prefix, closer + 1);
             }
         }
-        return numParens;
+        return matches;
     }
 
     /**
@@ -499,87 +455,65 @@ public class Pattern implements Serializable {
      */
     static public Map<String,List<GroupInfo> > extractGroupInfo(String namedPattern) {
         Map<String,List<GroupInfo> > groupInfo = new LinkedHashMap<String,List<GroupInfo> >();
-        java.util.regex.Matcher matcher = NAMED_GROUP_PATTERN.matcher(namedPattern);
-        while(matcher.find()) {
-
-            int pos = matcher.start();
+        SyntaxInfo info = new SyntaxInfo(namedPattern);
+        for (int[] m : findNamedConstructs(namedPattern, "(?<", info.nextGt)) {
+            int pos = m[0];
 
             // ignore escaped paren
-            if (isEscapedChar(namedPattern, pos)) continue;
+            if (info.escaped[pos]) continue;
 
-            String name = matcher.group(INDEX_GROUP_NAME);
-            int groupIndex = countOpenParens(namedPattern, pos);
+            String name = namedPattern.substring(m[1], m[2]);
+            int groupIndex = info.capturingParensBefore[pos];
 
-            List<GroupInfo> list;
-            if (groupInfo.containsKey(name)) {
-                list = groupInfo.get(name);
-            } else {
+            List<GroupInfo> list = groupInfo.get(name);
+            if (list == null) {
                 list = new ArrayList<GroupInfo>();
+                groupInfo.put(name, list);
             }
             list.add(new GroupInfo(groupIndex, pos));
-            groupInfo.put(name, list);
         }
         return groupInfo;
     }
 
     /**
-     * Replaces strings matching a pattern with another string. If the string
-     * to be replaced is escaped with a slash, it is skipped.
-     *
-     * @param input the string to evaluate
-     * @param pattern the pattern that matches the string to be replaced
-     * @param replacement the string to replace the target
-     * @return the modified string (original instance of {@code input})
-     */
-    static private StringBuilder replace(StringBuilder input, java.util.regex.Pattern pattern, String replacement) {
-        java.util.regex.Matcher m = pattern.matcher(input);
-        while (m.find()) {
-            if (isEscapedChar(input.toString(), m.start())) {
-                continue;
-            }
-
-            // since we're replacing the original string being matched,
-            // we have to reset the matcher so that it searches the new
-            // string
-            input.replace(m.start(), m.end(), replacement);
-            m.reset(input);
-        }
-        return input;
-    }
-
-    /**
      * Replaces referenced group names with the reference to the corresponding group
-     * index (e.g., <b><code>\k&lt;named></code></b>} to <b><code>\k2</code></b>};
-     * <b><code>${named}</code></b> to <b><code>$2</code></b>}).
-     * This assumes the group names have already been parsed from the pattern.
+     * index (e.g., <b><code>\k&lt;named&gt;</code></b>} to <b><code>\k2</code></b>};
+     * <b><code>${named}</code></b> to <b><code>$2</code></b>}). Escaped references
+     * are skipped. This assumes the group names have already been parsed from the
+     * pattern.
      *
      * @param input the string to evaluate
-     * @param pattern the pattern that matches the string to be replaced
+     * @param namePrefix the prefix of the reference (e.g., "\\k&lt;" or "${")
+     * @param closeChar the character that ends the reference (e.g., '&gt;' or '}')
      * @param prefix string to prefix to the replacement (e.g., "$" or "\\")
-     * @return the modified string (original instance of {@code input})
+     * @return the modified string
      * @throws PatternSyntaxException group name was not found
      */
-    private StringBuilder replaceGroupNameWithIndex(StringBuilder input, java.util.regex.Pattern pattern, String prefix) {
-        java.util.regex.Matcher m = pattern.matcher(input);
-        while (m.find()) {
-            if (isEscapedChar(input.toString(), m.start())) {
+    private String replaceGroupNameWithIndex(String input, String namePrefix, char closeChar, String prefix) {
+        SyntaxInfo info = new SyntaxInfo(input);
+        int[] nextCloser = closeChar == '>' ? info.nextGt : info.nextCloseBrace;
+        StringBuilder out = new StringBuilder(input.length());
+        int last = 0;
+        for (int[] m : findNamedConstructs(input, namePrefix, nextCloser)) {
+            if (info.escaped[m[0]]) {
                 continue;
             }
 
-            int index = indexOf(m.group(INDEX_GROUP_NAME));
+            int index = indexOf(input.substring(m[1], m[2]));
             if (index >= 0) {
                 index++;
             } else {
-                throw new PatternSyntaxException("unknown group name", input.toString(), m.start(INDEX_GROUP_NAME));
+                out.append(input, last, m[0]);
+                throw new PatternSyntaxException("unknown group name",
+                        out.toString() + input.substring(m[0]),
+                        out.length() + (m[1] - m[0]));
             }
 
-            // since we're replacing the original string being matched,
-            // we have to reset the matcher so that it searches the new
-            // string
-            input.replace(m.start(), m.end(), prefix + index);
-            m.reset(input);
+            out.append(input, last, m[0]).append(prefix).append(index);
+            last = m[2] + 1;
         }
-        return input;
+        out.append(input, last, input.length());
+        return out.toString();
     }
 
     /**
@@ -603,10 +537,20 @@ public class Pattern implements Serializable {
     private java.util.regex.Pattern buildStandardPattern(String namedPattern, Integer flags) {
         // replace the named-group construct with left-paren but
         // make sure we're actually looking at the construct (ignore escapes)
-        StringBuilder s = new StringBuilder(namedPattern);
-        s = replace(s, NAMED_GROUP_PATTERN, "(");
-        s = replaceGroupNameWithIndex(s, BACKREF_NAMED_GROUP_PATTERN, "\\");
-        return java.util.regex.Pattern.compile(s.toString(), flags);
+        SyntaxInfo info = new SyntaxInfo(namedPattern);
+        StringBuilder s = new StringBuilder(namedPattern.length());
+        int last = 0;
+        for (int[] m : findNamedConstructs(namedPattern, "(?<", info.nextGt)) {
+            if (info.escaped[m[0]]) {
+                continue;
+            }
+            s.append(namedPattern, last, m[0]).append('(');
+            last = m[2] + 1;
+        }
+        s.append(namedPattern, last, namedPattern.length());
+
+        String standard = replaceGroupNameWithIndex(s.toString(), "\\k<", '>', "\\");
+        return java.util.regex.Pattern.compile(standard, flags);
     }
 
     /**
