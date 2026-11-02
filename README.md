@@ -27,7 +27,7 @@ Install
 
 ### Gradle
 ```gradle
-implementation 'com.github.tony19:named-regexp:1.0.0'
+implementation 'com.github.tony19:named-regexp:1.1.0'
 ```
 
 ### Maven
@@ -35,7 +35,7 @@ implementation 'com.github.tony19:named-regexp:1.0.0'
 <dependency>
   <groupId>com.github.tony19</groupId>
   <artifactId>named-regexp</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
