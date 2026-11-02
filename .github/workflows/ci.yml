@@ -19,11 +19,10 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
-      # Maven 3.9.13+ binds maven-resources-plugin 3.4.0 by default, which
-      # fails to load on JDK 10, so use the last Maven that works there.
-      - name: Use Maven 3.9.12 on JDK 10
+      # JDK 10's AVX-512 intrinsics corrupt strings (runs of NUL chars) on
+      # the hosted runners' CPUs, which breaks Maven in random ways (e.g.,
+      # "Unable to load the mojo 'resources'"). Limit JDK 10 to AVX2.
+      - name: Disable AVX-512 on JDK 10
         if: matrix.jdk == '10'
-        run: |
-          curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz | tar xz -C "$RUNNER_TEMP"
-          echo "$RUNNER_TEMP/apache-maven-3.9.12/bin" >> "$GITHUB_PATH"
+        run: echo "JAVA_TOOL_OPTIONS=-XX:UseAVX=2" >> "$GITHUB_ENV"
       - run: mvn -v && mvn verify -Dgpg.skip
