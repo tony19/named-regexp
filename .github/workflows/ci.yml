@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         jdk: [ '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21' ]
     name: JDK ${{ matrix.jdk }}
@@ -18,4 +19,10 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.jdk }}
           cache: 'maven'
-      - run: mvn verify -Dgpg.skip
+      # JDK 10's AVX-512 intrinsics corrupt strings (runs of NUL chars) on
+      # the hosted runners' CPUs, which breaks Maven in random ways (e.g.,
+      # "Unable to load the mojo 'resources'"). Limit JDK 10 to AVX2.
+      - name: Disable AVX-512 on JDK 10
+        if: matrix.jdk == '10'
+        run: echo "JAVA_TOOL_OPTIONS=-XX:UseAVX=2" >> "$GITHUB_ENV"
+      - run: mvn -v && mvn verify -Dgpg.skip

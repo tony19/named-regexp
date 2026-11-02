@@ -556,4 +556,56 @@ public class PatternTest {
         Pattern p = Pattern.compile("(?<foo>xyz)(?<" + GROUP_NAME + ">\\d+)abc\\k<" + GROUP_NAME + ">");
         assertEquals("(xyz)(\\d+)abc\\2", p.standardPattern());
     }
+
+    private static String repeat(String s, int count) {
+        StringBuilder sb = new StringBuilder(s.length() * count);
+        for (int i = 0; i < count; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
+    // Parsing named groups used to take cubic time in the length of the
+    // pattern, so a moderately sized pattern could hang the compiling
+    // thread for minutes. These tests guard against that regression.
+    @Test(timeout = 5000)
+    public void testCompileManyNamedGroupsInLinearTime() {
+        final int count = 3000;
+        Pattern p = Pattern.compile(repeat("(?<a>x)", count));
+        assertEquals(repeat("(x)", count), p.standardPattern());
+        assertEquals(count, p.groupInfo().get("a").size());
+        assertEquals(count - 1, p.indexOf("a", count - 1));
+    }
+
+    @Test(timeout = 5000)
+    public void testExtractGroupInfoWithManyParensInLinearTime() {
+        final int count = 20000;
+        // literal, escaped, and non-capturing parens are not counted as groups
+        String unit = "[(]\\(\\Q(\\E(?:y)(?<=z)(?<a>x)";
+        Map<String, List<GroupInfo>> info = Pattern.extractGroupInfo(repeat("()", count) + repeat(unit, count));
+        List<GroupInfo> list = info.get("a");
+        assertEquals(count, list.size());
+        assertEquals(count, list.get(0).groupIndex());
+        assertEquals(count + count - 1, list.get(count - 1).groupIndex());
+    }
+
+    @Test(timeout = 5000)
+    public void testCompileManyUnclosedNamedGroupsInLinearTime() {
+        thrown.expect(PatternSyntaxException.class);
+        Pattern.compile(repeat("(?<", 50000));
+    }
+
+    @Test(timeout = 5000)
+    public void testCompileManyBackrefsInLinearTime() {
+        final int count = 3000;
+        Pattern p = Pattern.compile("(?<a>x)" + repeat("\\k<a>", count));
+        assertEquals("(x)" + repeat("\\1", count), p.standardPattern());
+    }
+
+    @Test(timeout = 5000)
+    public void testReplacePropertiesInLinearTime() {
+        final int count = 20000;
+        Pattern p = Pattern.compile("(?<a>x)");
+        assertEquals(repeat("$1", count), p.replaceProperties(repeat("${a}", count)));
+    }
 }
