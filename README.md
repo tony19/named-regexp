@@ -59,11 +59,24 @@ newer JDK to build.
 Release
 -------
 
-To release a new production version, run the following command:
+To cut a new release, run the [Release](https://github.com/tony19/named-regexp/actions/workflows/release.yml)
+workflow from the Actions tab (or `gh workflow run release.yml [-f version=X.Y.Z]`).
+By default, it bumps the patch version of the latest release; a custom version can
+be given as input. The workflow sets the version in `pom.xml` and this README, tags
+the release commit (`vX.Y.Z`), creates a GitHub release with notes generated from
+[Conventional Commits](https://www.conventionalcommits.org/), and then bumps
+`pom.xml` to the next `-SNAPSHOT` version.
+
+The workflow does not deploy to Maven Central. To deploy a release cut by the
+workflow, check out its tag and deploy it with signed artifacts:
 
 ```bash
-$ ./release.sh
+$ git checkout vX.Y.Z
+$ mvn clean deploy -DperformRelease=true
 ```
+
+(`./release.sh` is the legacy `maven-release-plugin` flow, which tags and bumps
+versions itself, so don't combine it with the workflow.)
 
 *Releases are deployed to https://repo1.maven.org/maven2/com/github/tony19/named-regexp/*
 
