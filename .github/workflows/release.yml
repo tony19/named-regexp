@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: release
@@ -25,9 +26,6 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
-          # main is protected; a token that may bypass protection can be
-          # provided via the RELEASE_TOKEN secret.
-          token: ${{ secrets.RELEASE_TOKEN || github.token }}
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -148,13 +146,32 @@ jobs:
             -DnewVersion="$NEXT_VERSION" -DgenerateBackupPoms=false
           git commit -am "chore: prepare for next development iteration"
 
-      - name: Push
+      # The default branch is protected (changes must go through a pull
+      # request), so push the release commits to a release branch along with
+      # the tag, and open a pull request to merge the version bumps.
+      - name: Push release branch and tag
         env:
           TAG: ${{ steps.version.outputs.tag }}
-        run: git push --atomic origin "HEAD:$GITHUB_REF_NAME" "$TAG"
+        run: git push --atomic origin "HEAD:refs/heads/release/$TAG" "$TAG"
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
         run: gh release create "$TAG" --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
+
+      - name: Open pull request for version bumps
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          NEXT_VERSION: ${{ steps.version.outputs.next_version }}
+        run: |
+          body="Merges the version bumps from the [$TAG release](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/$TAG) into \`$GITHUB_REF_NAME\`: sets the README to \`${TAG#v}\` and \`pom.xml\` to \`$NEXT_VERSION\`."
+          if ! url=$(gh pr create --base "$GITHUB_REF_NAME" --head "release/$TAG" \
+              --title "chore(release): $TAG" --body "$body"); then
+            # Creating pull requests may be disabled for GitHub Actions in the
+            # repo settings; don't fail the release over it.
+            url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/$GITHUB_REF_NAME...release/$TAG?expand=1"
+            echo "::warning::Could not open a pull request. Open one at $url"
+          fi
+          echo "Version bump pull request: $url" >> "$GITHUB_STEP_SUMMARY"
