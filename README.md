@@ -65,7 +65,9 @@ By default, it bumps the patch version of the latest release; a custom version c
 be given as input. The workflow sets the version in `pom.xml` and this README, tags
 the release commit (`vX.Y.Z`), creates a GitHub release with notes generated from
 [Conventional Commits](https://www.conventionalcommits.org/), and then bumps
-`pom.xml` to the next `-SNAPSHOT` version.
+`pom.xml` to the next `-SNAPSHOT` version. Since `main` is protected, those commits
+are pushed to a `release/vX.Y.Z` branch, and the workflow opens a pull request to
+merge them into `main`.
 
 The workflow does not deploy to Maven Central. To deploy a release cut by the
 workflow, check out its tag and deploy it with signed artifacts:
